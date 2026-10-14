@@ -1,0 +1,40 @@
+======================================================================
+                  VCKEYS 3.0.2 PRO - PORTABLE EDITION
+        BỘ GÕ ĐA NGÔN NGỮ NATIVE (VIỆT - TRUNG - ANH) CHO WINDOWS
+======================================================================
+
+1. CÁCH SỬ DỤNG:
+   - Bạn chỉ cần copy toàn bộ thư mục này sang bất kỳ máy tính Windows nào
+     (Windows 10, Windows 11) và nhấp đúp vào "VCKeys.exe" để chạy ngay.
+   - Thư mục bao gồm:
+     + VCKeys.exe : Chương trình bộ gõ chính.
+     + libc++.dll, libunwind.dll, WebView2Loader.dll : Các thư viện runtime.
+     + config/ : Thư mục lưu cấu hình và từ điển cá nhân hóa.
+   - Không cần cài đặt, không cần cài thêm bất kỳ công cụ nào khác.
+
+2. CÁC PHÍM TẮT CHÍNH:
+   - [Ctrl + Shift]     : Chuyển đổi qua lại giữa Tiếng Việt (VN) ⮂ Tiếng Trung (CN)
+   - [Alt + Shift]      : Chuyển trực tiếp sang Tiếng Anh (EN)
+   - [Ctrl + Shift + F] : Chuyển đổi qua lại giữa Giản thể (简体) ⮂ Phồn thể (繁體)
+
+3. BỘ GÕ TIẾNG TRUNG (PINYIN + JIANPIN + V-MODE):
+   - Chọn từ: Bấm các phím số 1-9 hoặc dùng chuột CLICK TRỰC TIẾP vào từ cần chọn.
+   - Gõ tắt chữ cái đầu (简拼): Gõ "gs" -> 公司, "zg" -> 中国, "bj" -> 北京, "nh" -> 你好.
+   - V-Mode tiện ích: Gõ "v1234" -> 一千二百三十四, "v2026.08.26" -> 2026年08月26日.
+   - Lật trang danh sách từ liên quan:
+     + Sang trang tiếp theo : Bấm phím [=], [ ] ], [ . ], [PageDown] hoặc click nút [▶]
+     + Về trang trước đó   : Bấm phím [-], [ [ ], [ , ], [PageUp] hoặc click nút [◀]
+
+4. BỘ GÕ TIẾNG VIỆT (UNIKEY C++ CORE INTEGRATION):
+   - Tích hợp chuẩn 100% thuật toán UniKey C++ Core nguyên bản.
+   - Hỗ trợ bỏ dấu tự do, bỏ dấu trễ (dudocjw -> được, vanag -> vâng).
+   - Tự động nhận diện và khôi phục từ tiếng Anh thông minh.
+   - Công nghệ Anti-Flicker & Zero-Latency: gõ siêu tốc, mượt mà, không giật chớp chữ.
+
+5. ĐÓNG GÓP Ý KIẾN:
+   - Mọi thông tin đóng góp để bộ gõ tốt hơn xin gửi về email: votahiep@gmail.com
+
+======================================================================
+                       VCKeys - Gọn nhẹ, Tốc độ, Tiện lợi
+======================================================================
+

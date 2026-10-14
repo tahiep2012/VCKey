@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCKeys 3.0.2 - Bảng Điều Khiển</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="app-icon">V</div>
+        <div class="app-title">
+          <h2>VCKeys <span>3.0.2 Pro</span></h2>
+          <p>Bộ gõ đa ngôn ngữ</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <span id="currentModeBadge" class="mode-badge vn">🇻🇳 Tiếng Việt</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-general">⌨️ Bộ gõ</button>
+      <button class="tab-btn" data-tab="tab-chinese">🇨🇳 Tiếng Trung</button>
+      <button class="tab-btn" data-tab="tab-system">⚙️ Hệ thống</button>
+      <button class="tab-btn" data-tab="tab-about">ℹ️ Thông tin</button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <main class="tab-content">
+      <!-- TAB 1: BỘ GÕ -->
+      <section id="tab-general" class="tab-pane active">
+        <div class="card">
+          <div class="card-title">Ngôn ngữ & Bảng mã</div>
+          <div class="form-row">
+            <label for="selectMode">Ngôn ngữ mặc định:</label>
+            <select id="selectMode">
+              <option value="Vietnamese">🇻🇳 Tiếng Việt (Telex)</option>
+              <option value="Chinese">🇨🇳 Tiếng Trung (Pinyin Sogou)</option>
+              <option value="English">🇬🇧 Tiếng Anh (English)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="selectInputType">Kiểu gõ tiếng Việt:</label>
+            <select id="selectInputType">
+              <option value="Telex">Telex chuẩn (Hỗ trợ bỏ dấu trễ & hủy mũ)</option>
+              <option value="Simple Telex">Simple Telex</option>
+              <option value="VNI">VNI (Phím số 1-9)</option>
+              <option value="VIQR">VIQR (Ký hiệu)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="selectCharset">Bảng mã ký tự:</label>
+            <select id="selectCharset">
+              <option value="Unicode Dựng sẵn">Unicode Dựng sẵn (Chuẩn quốc tế UTF-8)</option>
+              <option value="Unicode Tổ hợp">Unicode Tổ hợp</option>
+              <option value="TCVN3 (ABC)">TCVN3 (ABC Tiêu chuẩn Việt Nam)</option>
+              <option value="VNI Windows">VNI Windows</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Tùy chọn gõ thông minh</div>
+          <div class="checkbox-grid">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkFreeMark" checked />
+              <span>Bỏ dấu & tạo mũ tự do (FreeMark: <code>dudocjw</code> → <code>được</code>)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkAutoEnglish" checked />
+              <span>Tự khôi phục từ tiếng Anh (<code>good bye</code>, <code>book</code>, <code>cool</code>)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkSpellingCheck" checked />
+              <span>Kiểm tra chính tả tiếng Việt</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkNewAccentStyle" />
+              <span>Đặt dấu theo chuẩn mới (<code>hóa</code>, <code>thủy</code>)</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TIẾNG TRUNG -->
+      <section id="tab-chinese" class="tab-pane">
+        <div class="card">
+          <div class="card-title">Bính âm Sogou Pinyin (搜狗输入法)</div>
+          <div class="form-row">
+            <label for="selectCandSize">Số ứng viên mỗi trang:</label>
+            <select id="selectCandSize">
+              <option value="5">5 ứng viên (Gọn gàng)</option>
+              <option value="9">9 ứng viên (Đầy đủ 1-9)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="inputCandFontSize">Kích thước chữ ô gợi ý (px):</label>
+            <div class="combobox-wrapper" id="fontSizeCombobox">
+              <input type="number" id="inputCandFontSize" class="combobox-input" min="8" max="48" value="17" placeholder="17" />
+              <button type="button" class="combobox-btn" id="btnToggleFontSize" tabindex="-1">▾</button>
+              <div class="combobox-dropdown" id="dropdownFontSize">
+                <div class="combobox-item" data-value="9">9</div>
+                <div class="combobox-item" data-value="10">10</div>
+                <div class="combobox-item" data-value="11">11</div>
+                <div class="combobox-item" data-value="12">12</div>
+                <div class="combobox-item" data-value="14">14</div>
+                <div class="combobox-item" data-value="16">16</div>
+                <div class="combobox-item" data-value="17">17 (Chuẩn)</div>
+                <div class="combobox-item" data-value="18">18</div>
+                <div class="combobox-item" data-value="20">20</div>
+                <div class="combobox-item" data-value="22">22</div>
+                <div class="combobox-item" data-value="24">24</div>
+                <div class="combobox-item" data-value="26">26</div>
+                <div class="combobox-item" data-value="28">28</div>
+                <div class="combobox-item" data-value="32">32</div>
+                <div class="combobox-item" data-value="36">36</div>
+              </div>
+            </div>
+          </div>
+          <div class="checkbox-grid">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkSentenceCompose" checked />
+              <span>Tự động ghép câu bính âm dài (Dynamic Sentence Composition)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkFuzzyPinyin" checked />
+              <span>Bính âm mờ (Fuzzy Pinyin: z/zh, c/ch, s/sh, in/ing)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkChineseJianpin" checked />
+              <span>Gõ tắt chữ cái đầu (简拼 - Jianpin: <code>gs</code> → 公司, <code>zg</code> → 中国, <code>bj</code> → 北京)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkChinesePunctuation" checked />
+              <span>Tự động chuyển dấu câu tiếng Trung (<code>，。、《》！？：；“”</code>)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkEmoji" checked />
+              <span>Gợi ý biểu tượng cảm xúc (Emoji: <code>kaixin</code> → 😊)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkVMode" checked />
+              <span>Chế độ gõ nhanh số, ngày tháng & toán học (V-Mode: <code>v1234</code> → 一千二百三十四 / 壹仟贰佰叁拾肆, <code>v2026.08.26</code> → 2026年08月26日, <code>v100*25</code> → 2500)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkTraditional" />
+              <span>Chế độ Phồn thể 繁體 (Chuyển nhanh: <code>Ctrl + Shift + F</code>)</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: HỆ THỐNG -->
+      <section id="tab-system" class="tab-pane">
+        <div class="card">
+          <div class="card-title">Phím tắt chuyển đổi</div>
+          <div class="hotkey-group">
+            <span class="hotkey-badge">Ctrl + Shift</span>
+            <p>🇻🇳 Tiếng Việt ⮂ 🇨🇳 Tiếng Trung</p>
+          </div>
+          <div class="hotkey-group">
+            <span class="hotkey-badge">Alt + Shift</span>
+            <p>🇬🇧 Tiếng Anh (English)</p>
+          </div>
+          <div class="hotkey-group">
+            <span class="hotkey-badge">Ctrl + Shift + F</span>
+            <p>Đổi chế độ gõ: Giản thể 简体 ⮂ Phồn thể 繁體</p>
+          </div>
+          <div class="hotkey-group">
+            <span class="hotkey-badge">Ctrl + Alt + F</span>
+            <p>Bôi đen văn bản ➔ Chuyển đổi Giản ⮂ Phồn trực tiếp</p>
+          </div>
+        <div class="card">
+          <div class="card-title">Giao diện ứng dụng</div>
+          <div class="form-row">
+            <label for="selectTheme">Chủ đề giao diện (Theme):</label>
+            <select id="selectTheme">
+              <option value="system">🌓 Tự động theo Windows</option>
+              <option value="light">☀️ Giao diện sáng (Light Mode)</option>
+              <option value="dark">🌙 Giao diện tối (Dark Mode)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Hành vi khởi động & Khay hệ thống</div>
+          <div class="checkbox-grid">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkRunOnStartup" />
+              <span>Khởi động cùng Windows</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkMinimizeToTray" checked />
+              <span>Thu nhỏ xuống khay hệ thống (System Tray)</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkShowOsd" checked />
+              <span>Hiển thị thông báo OSD Toast góc màn hình</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="chkBeepSwitch" />
+              <span>Âm thanh thông báo khi chuyển ngôn ngữ</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: THÔNG TIN -->
+      <section id="tab-about" class="tab-pane">
+        <div class="card about-card">
+          <div class="about-header">
+            <div class="about-logo">V</div>
+            <div class="about-title-group">
+              <div class="about-title-row">
+                <span class="about-app-name">VCKeys</span>
+                <span class="about-version-tag">3.0.2 Pro</span>
+              </div>
+              <p class="about-desc">Bộ gõ đa ngôn ngữ Việt - Trung - Anh thông minh, nhỏ gọn và tiện lợi</p>
+            </div>
+          </div>
+
+          <div class="about-features-grid">
+            <div class="feature-item">
+              <div class="feature-title"><span>🇻🇳 🇨🇳 🇬🇧</span> 3 trong 1</div>
+              <div class="feature-desc">Việt • Trung • Anh chuyển nhanh tức thì</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-title"><span>⚡</span> Giản ⮂ Phồn</div>
+              <div class="feature-desc">Bôi đen chuyển đổi nhanh qua phím tắt</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-title"><span>🛡️</span> Lọc tiếng Anh</div>
+              <div class="feature-desc">Tự động nhận diện từ vựng chuẩn xác</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-title"><span>🕊️</span> Siêu nhẹ & Êm</div>
+              <div class="feature-desc">Tối ưu tài nguyên, gõ không độ trễ</div>
+            </div>
+          </div>
+
+          <div class="about-contact-box">
+            <div class="contact-left">
+              <span class="contact-icon">✉️</span>
+              <div class="contact-text">
+                <div class="contact-label">Đóng góp ý kiến & Hỗ trợ kỹ thuật</div>
+                <div class="contact-email">votahiep@gmail.com</div>
+              </div>
+            </div>
+            <a href="mailto:votahiep@gmail.com" class="btn-contact">Gửi thư</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Controls -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <button id="btnResetDefaults" class="btn btn-secondary">Khôi phục mặc định</button>
+      </div>
+      <div class="footer-right">
+        <button id="btnApply" class="btn btn-primary">Lưu cài đặt</button>
+        <button id="btnExit" class="btn btn-danger">Thoát</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+[package]
+name = "vckeys-tauri"
+version = "3.0.2"
+description = "VCKeys - Bộ gõ Đa Ngôn Ngữ Native Siêu Nhanh (Việt - Trung - Anh)"
+authors = ["VCKeys Team"]
+edition = "2021"
+
+[lib]
+name = "vckeys_lib"
+crate-type = ["staticlib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+cc = "1.0"
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "image-ico"] }
+tauri-plugin-opener = "2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+lazy_static = "1.4"
+parking_lot = "0.12"
+regex = "1.10"
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_System_Threading",
+    "Win32_System_LibraryLoader",
+    "Win32_Graphics_Gdi",
+    "Win32_System_Registry",
+    "Win32_System_Diagnostics_ToolHelp",
+    "Win32_System_ProcessStatus",
+    "Win32_System_DataExchange",
+    "Win32_System_Memory"
+] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
