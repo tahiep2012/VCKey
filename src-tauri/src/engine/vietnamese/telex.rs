@@ -171,16 +171,25 @@ impl VietnameseTelexEngine {
         let mut result = String::with_capacity(s.len());
         let mut i = 0;
         while i < chars.len() {
-            if i >= 1 && i + 1 < chars.len() {
-                let curr = chars[i].to_ascii_lowercase();
-                let next = chars[i + 1].to_ascii_lowercase();
-                let has_vowel_before = chars[..i].iter().any(|&c| {
-                    matches!(c.to_ascii_lowercase(), 'a' | 'e' | 'i' | 'o' | 'u' | 'y')
-                });
-                let is_modifier = matches!(curr, 'r' | 's' | 'f' | 'x' | 'j' | 'w');
-                if has_vowel_before && is_modifier && curr == next {
-                    result.push(chars[i]);
-                    i += 2; // Skip duplicate modifier
+            let curr = chars[i].to_ascii_lowercase();
+            let is_modifier = matches!(curr, 'r' | 's' | 'f' | 'x' | 'j' | 'w');
+            let has_vowel_before = i >= 1 && chars[..i].iter().any(|&c| {
+                matches!(c.to_ascii_lowercase(), 'a' | 'e' | 'i' | 'o' | 'u' | 'y')
+            });
+
+            if is_modifier && has_vowel_before {
+                let mut run_len = 0;
+                while i + run_len < chars.len() && chars[i + run_len].to_ascii_lowercase() == curr {
+                    run_len += 1;
+                }
+                if run_len >= 2 {
+                    // For repeated modifier keys (e.g. rr, rrr, rrrr), the first pair cancels
+                    // the diacritic and produces 1 character. Every subsequent keypress produces
+                    // an additional character. Thus run_len keys yield run_len - 1 characters.
+                    for j in 0..(run_len - 1) {
+                        result.push(chars[i + j]);
+                    }
+                    i += run_len;
                     continue;
                 }
             }

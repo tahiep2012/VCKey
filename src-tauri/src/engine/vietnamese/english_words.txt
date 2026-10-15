@@ -28487,6 +28487,7 @@ pendingly
 pendingment
 pendings
 pendingtion
+per
 percent
 percentable
 percented

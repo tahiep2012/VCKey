@@ -500,6 +500,30 @@ mod tests {
             ("SSL", "SSL"), ("ssl", "ssl"),
             ("SSD", "SSD"), ("ssd", "ssd"),
             ("TSS", "TSS"), ("tss", "tss"),
+            // "per" English word and repeated 'r' modifier sequence
+            ("per", "per"),
+            ("Per", "Per"),
+            ("PER", "PER"),
+            ("perr", "per"),
+            ("Perr", "Per"),
+            ("perrr", "perr"),
+            ("perrrr", "perrr"),
+            ("perrrrr", "perrrr"),
+            ("percent", "percent"),
+            ("Percent", "Percent"),
+            ("perhaps", "perhaps"),
+            ("period", "period"),
+            ("perfect", "perfect"),
+            ("perform", "perform"),
+            ("person", "person"),
+            ("personal", "personal"),
+            ("permission", "permission"),
+            ("perplexity", "perplexity"),
+            // Ensure Vietnamese words with 'ph' initials remain functional
+            ("phongs", "phóng"),
+            ("phongr", "phỏng"),
+            ("phats", "phát"),
+            ("phuowng", "phương"),
         ];
         for (input, expected) in cases {
             assert_eq!(

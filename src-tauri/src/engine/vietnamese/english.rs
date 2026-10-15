@@ -33,7 +33,8 @@ lazy_static! {
             "past", "must", "rest", "guest", "west", "east", "dust", "rust", "bust", "gust", "cast", "mast",
             "lost", "nest", "pest", "quest", "blast", "boost", "frost", "ghost", "trust", "burst",
             "artist", "forest", "honest", "modest", "exist", "insist", "resist", "persist", "consist", "assist",
-            "twist", "wrist", "fist", "mist", "press", "true", "false", "null", "class", "public", "private", "return"
+            "twist", "wrist", "fist", "mist", "press", "true", "false", "null", "class", "public", "private", "return",
+            "per", "percent", "permission", "period", "perhaps", "perfect", "perform", "personal", "person", "perplexity"
         ];
         for w in extra {
             s.insert(w);
@@ -72,9 +73,9 @@ fn is_vietnamese_telex_syllable(s: &str) -> bool {
     const TONES: [char; 5] = ['s', 'f', 'r', 'x', 'j'];
     const MODIFIERS: [&str; 8] = ["aa", "ee", "oo", "ow", "uw", "aw", "dd", "w"];
 
-    const VN_INITIALS: [&str; 27] = [
+    const VN_INITIALS: [&str; 26] = [
         "ngh", "ng", "nh", "gh", "gi", "kh", "ph", "qu", "th", "tr", "dd", "ch",
-        "b", "c", "d", "g", "h", "k", "l", "m", "n", "p", "r", "s", "t", "v", "x"
+        "b", "c", "d", "g", "h", "k", "l", "m", "n", "r", "s", "t", "v", "x"
     ];
 
     const VN_FINALS: [&str; 8] = [
@@ -217,9 +218,9 @@ pub fn is_english_word(raw_lower: &str) -> bool {
     }
 
     // High-priority English words that should always remain English
-    const HIGH_PRIORITY_ENGLISH: [&str; 20] = [
+    const HIGH_PRIORITY_ENGLISH: [&str; 21] = [
         "yes", "bye", "hey", "hi", "ok", "okay", "no", "react", "vue", "docker", "rust", "draft", "status", "canvas",
-        "down", "town", "look", "looks", "looking", "looked"
+        "down", "town", "look", "looks", "looking", "looked", "per"
     ];
     if HIGH_PRIORITY_ENGLISH.contains(&raw_lower) {
         return true;
