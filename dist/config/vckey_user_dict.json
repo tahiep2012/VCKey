@@ -1,32 +1,98 @@
 {
+  "em": [
+    "饿吗"
+  ],
+  "nihaoma": [
+    "你好吗"
+  ],
+  "wozuijinhenhao": [
+    "我最进很好"
+  ],
+  "nihaomacangkubu": [
+    "你好吗仓库部"
+  ],
+  "cangkubucangku": [
+    "仓库部仓库"
+  ],
   "nihaonihao": [
     "你好你好"
   ],
-  "xiexie": [
-    "谢谢"
+  "buwo": [
+    "部我"
   ],
-  "nihao": [
-    "你好"
+  "nihaowozuijinhenhao": [
+    "你好我最进很好"
   ],
-  "cangchengpincangwo": [
-    "仓成品仓我"
+  "zicaibu": [
+    "紫菜部"
   ],
-  "yiju": [
-    "一举"
+  "ai": [
+    "爱"
+  ],
+  "haonihao": [
+    "好你好"
   ],
   "cangkubu": [
     "仓库簿",
     "仓库不",
     "仓库部"
   ],
-  "zicaibu": [
-    "紫菜部"
+  "cangcailiaocang": [
+    "仓材料仓"
   ],
-  "wozuijinhenhao": [
-    "我最进很好"
+  "ni": [
+    "你"
+  ],
+  "yiju": [
+    "一举"
+  ],
+  "nihaocangkubu": [
+    "你好仓库簿"
   ],
   "af": [
     "阿芳"
+  ],
+  "sao": [
+    "扫"
+  ],
+  "daj": [
+    "大南街"
+  ],
+  "woqu": [
+    "我去"
+  ],
+  "nihaojintian": [
+    "你好今天"
+  ],
+  "ok": [
+    "欧卡"
+  ],
+  "jintian": [
+    "今天"
+  ],
+  "nihao": [
+    "你好"
+  ],
+  "xiexie": [
+    "谢谢"
+  ],
+  "guan": [
+    "关"
+  ],
+  "kaixin": [
+    "开心"
+  ],
+  "xin": [
+    "新"
+  ],
+  "hao": [
+    "好"
+  ],
+  "cangchengpincangwo": [
+    "仓成品仓我"
+  ],
+  "tao": [
+    "套"
   ],
   "cangkubucangkubu": [
     "仓库不仓库簿",
@@ -37,64 +103,13 @@
   "chengpincang": [
     "成品仓"
   ],
-  "guan": [
-    "关"
-  ],
-  "nihaomacangkubu": [
-    "你好吗仓库部"
-  ],
-  "daj": [
-    "大南街"
-  ],
-  "sao": [
-    "扫"
-  ],
-  "woqu": [
-    "我去"
-  ],
-  "tao": [
-    "套"
-  ],
-  "buwo": [
-    "部我"
-  ],
-  "hao": [
-    "好"
-  ],
-  "cangcailiaocang": [
-    "仓材料仓"
-  ],
-  "nihaocangkubu": [
-    "你好仓库簿"
-  ],
-  "em": [
-    "饿吗"
-  ],
-  "ok": [
-    "欧卡"
-  ],
   "chengpincangwocailiao": [
     "成品仓我材料"
-  ],
-  "cailiaocang": [
-    "材料仓"
   ],
   "nihaonihaoma": [
     "你好你好吗"
   ],
-  "nihaoma": [
-    "你好吗"
-  ],
-  "cangkubucangku": [
-    "仓库部仓库"
-  ],
-  "nihaowozuijinhenhao": [
-    "你好我最进很好"
-  ],
-  "ai": [
-    "爱"
-  ],
-  "haonihao": [
-    "好你好"
+  "cailiaocang": [
+    "材料仓"
   ]
 }

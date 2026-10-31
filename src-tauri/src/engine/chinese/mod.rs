@@ -4,6 +4,7 @@ pub mod emoji;
 pub mod candidate_window;
 pub mod user_dict;
 pub mod v_mode;
+pub mod pinyin_tone;
 
 pub use pinyin_trie::{ChineseEngine, tokenize_pinyin, Candidate};
 pub use s2t::convert_s2t;
@@ -11,6 +12,7 @@ pub use emoji::get_emoji_suggestions;
 pub use candidate_window::{show_candidate_popup, hide_candidate_popup, start_candidate_window_thread};
 pub use user_dict::UserDict;
 pub use v_mode::process_v_mode;
+pub use pinyin_tone::get_pinyin_with_tone;
 
 #[cfg(test)]
 mod tests {

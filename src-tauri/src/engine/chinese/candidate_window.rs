@@ -34,6 +34,7 @@ pub struct CandidateWindowState {
     pub font_size: usize,
     pub variant: String,
     pub theme: String,
+    pub show_pinyin_tone: bool,
     pub candidate_rects: Vec<(usize, RECT)>,
     pub prev_page_rect: RECT,
     pub next_page_rect: RECT,
@@ -52,6 +53,7 @@ impl Default for CandidateWindowState {
             font_size: 17,
             variant: "Simplified".to_string(),
             theme: "system".to_string(),
+            show_pinyin_tone: true,
             candidate_rects: Vec::new(),
             prev_page_rect: RECT { left: 0, top: 0, right: 0, bottom: 0 },
             next_page_rect: RECT { left: 0, top: 0, right: 0, bottom: 0 },
@@ -265,7 +267,7 @@ pub fn show_candidate_popup(
     variant: &str,
 ) {
     let (cx, cy) = get_caret_pos();
-    let font_size = {
+    let (font_size, show_tone) = {
         let mut state = CANDIDATE_UI_STATE.lock();
         state.visible = true;
         state.x = cx;
@@ -275,7 +277,7 @@ pub fn show_candidate_popup(
         state.current_page = page;
         state.page_size = page_size;
         state.variant = variant.to_string();
-        state.font_size
+        (state.font_size, state.show_pinyin_tone)
     };
 
     let hwnd = CAND_HWND.load(Ordering::SeqCst) as HWND;
@@ -303,6 +305,17 @@ pub fn show_candidate_popup(
                 windows_sys::w!("Microsoft YaHei"),
             );
             SelectObject(hdc, h_font_cand);
+
+            let tone_fs = (fs * 10 / 17).max(9);
+            let h_font_tone = if show_tone {
+                Some(CreateFontW(
+                    -tone_fs, 0, 0, 0, FW_BOLD as i32, 0, 0, 0, 1, 0, 0, 0, 0,
+                    windows_sys::w!("Segoe UI"),
+                ))
+            } else {
+                None
+            };
+
             let mut total_cand_width = 0;
             let cand_count = end - start;
             for (i, c) in candidates[start..end].iter().enumerate() {
@@ -312,11 +325,37 @@ pub fn show_candidate_popup(
                 } else {
                     c.text.clone()
                 };
-                let cand_str = format!("{}.{}", num, cand_text);
-                let cand_utf16: Vec<u16> = cand_str.encode_utf16().collect();
-                let mut size: SIZE = std::mem::zeroed();
-                GetTextExtentPoint32W(hdc, cand_utf16.as_ptr(), cand_utf16.len() as i32, &mut size);
-                total_cand_width += size.cx;
+
+                let item_w = if show_tone {
+                    let num_str = format!("{}.", num);
+                    let num_utf16: Vec<u16> = num_str.encode_utf16().collect();
+                    let mut num_size: SIZE = std::mem::zeroed();
+                    SelectObject(hdc, h_font_cand);
+                    GetTextExtentPoint32W(hdc, num_utf16.as_ptr(), num_utf16.len() as i32, &mut num_size);
+
+                    let cand_utf16: Vec<u16> = cand_text.encode_utf16().collect();
+                    let mut cand_size: SIZE = std::mem::zeroed();
+                    GetTextExtentPoint32W(hdc, cand_utf16.as_ptr(), cand_utf16.len() as i32, &mut cand_size);
+
+                    let tone_str = crate::engine::chinese::pinyin_tone::get_pinyin_with_tone(&cand_text, &c.pinyin);
+                    let mut tone_size: SIZE = std::mem::zeroed();
+                    if let Some(font_tone) = h_font_tone {
+                        SelectObject(hdc, font_tone);
+                        let tone_utf16: Vec<u16> = tone_str.encode_utf16().collect();
+                        GetTextExtentPoint32W(hdc, tone_utf16.as_ptr(), tone_utf16.len() as i32, &mut tone_size);
+                    }
+
+                    num_size.cx + cand_size.cx.max(tone_size.cx)
+                } else {
+                    SelectObject(hdc, h_font_cand);
+                    let cand_str = format!("{}.{}", num, cand_text);
+                    let cand_utf16: Vec<u16> = cand_str.encode_utf16().collect();
+                    let mut size: SIZE = std::mem::zeroed();
+                    GetTextExtentPoint32W(hdc, cand_utf16.as_ptr(), cand_utf16.len() as i32, &mut size);
+                    size.cx
+                };
+
+                total_cand_width += item_w;
                 if i < cand_count - 1 {
                     total_cand_width += cand_item_gap;
                 }
@@ -324,6 +363,9 @@ pub fn show_candidate_popup(
 
             SelectObject(hdc, old_font);
             DeleteObject(h_font_cand);
+            if let Some(font_tone) = h_font_tone {
+                DeleteObject(font_tone);
+            }
             DeleteObject(h_font_preedit);
             ReleaseDC(hwnd, hdc);
 
@@ -332,8 +374,16 @@ pub fn show_candidate_popup(
             let width = cand_row_total.max(header_min_width).max(160);
 
             let header_h = (fs * 15 / 17).max(18);
-            let cand_row_h = fs + 8;
-            let height = header_h + cand_row_h + 12;
+            let (_cand_row_h, height) = if show_tone {
+                let tone_line_h = tone_fs + 2;
+                let tone_hanzi_gap = 1;
+                let hanzi_line_h = fs + 2;
+                let row_h = tone_line_h + tone_hanzi_gap + hanzi_line_h + 4;
+                (row_h, header_h + row_h + 10)
+            } else {
+                let row_h = fs + 8;
+                (row_h, header_h + row_h + 12)
+            };
 
             let mut final_x = cx;
             let mut final_y = cy;
@@ -623,6 +673,8 @@ unsafe extern "system" fn cand_wnd_proc(
                 page_text_color,
                 cand1_color,
                 cand_other_color,
+                tone1_color,
+                tone_other_color,
                 badge_color,
             ) = if is_dark {
                 (
@@ -634,6 +686,8 @@ unsafe extern "system" fn cand_wnd_proc(
                     0x00CBD5E1, // Page Text: Slate 300
                     0x00F8BD38, // Cand #1: Cyan (RGB 56, 189, 248 -> BGR 0x00F8BD38)
                     0x00F9F5F1, // Other Cands: Off-white (RGB 241, 245, 249 -> BGR 0x00F9F5F1)
+                    0x00FA8560, // Tone #1: Sky Blue
+                    0x00B8A394, // Other Tones: Slate 400 (RGB 148, 163, 184 -> BGR 0x00B8A394)
                     0x0024BFFA, // Badge: Amber
                 )
             } else {
@@ -646,6 +700,8 @@ unsafe extern "system" fn cand_wnd_proc(
                     0x0064748B, // Page Text: Slate Muted
                     0x00D84E1D, // Cand #1: Primary Blue #1d4ed8
                     0x003B291E, // Other Cands: Dark Slate #1e293b
+                    0x00EB6325, // Tone #1: Primary Blue #2563eb
+                    0x00808080, // Other Tones: Slate Muted #808080
                     0x000677D9, // Badge: Amber
                 )
             };
@@ -675,6 +731,15 @@ unsafe extern "system" fn cand_wnd_proc(
                 -cand_fs, 0, 0, 0, FW_NORMAL as i32, 0, 0, 0, 1, 0, 0, 0, 0,
                 windows_sys::w!("Microsoft YaHei"),
             );
+            let tone_fs = (fs * 10 / 17).max(9);
+            let h_font_tone = if state.show_pinyin_tone {
+                Some(CreateFontW(
+                    -tone_fs, 0, 0, 0, FW_BOLD as i32, 0, 0, 0, 1, 0, 0, 0, 0,
+                    windows_sys::w!("Segoe UI"),
+                ))
+            } else {
+                None
+            };
 
             let header_top = 4;
             let header_bottom = header_top + (fs * 15 / 17).max(18);
@@ -774,61 +839,170 @@ unsafe extern "system" fn cand_wnd_proc(
             );
 
             // 4. Candidates list
-            SelectObject(hdc, h_font_cand);
             let start = state.current_page * state.page_size;
             let end = (start + state.page_size).min(state.candidates.len());
             let mut cur_x = 10;
             let mut local_rects: Vec<(usize, RECT)> = Vec::new();
 
             let cand_top = header_bottom + 2;
-            let cand_bottom = cand_top + cand_fs + 8;
-            let cand_item_gap = (fs * 4 / 10).max(6); // Compact gap between items (half of previous)
+            let cand_item_gap = (fs * 4 / 10).max(6); // Compact gap between items
 
-            for i in start..end {
-                let cand_text = if state.variant == "Traditional" {
-                    convert_s2t(&state.candidates[i].text)
-                } else {
-                    state.candidates[i].text.clone()
-                };
-                let num = (i - start) + 1;
-                let cand_str = format!("{}.{}", num, cand_text);
-                let cand_utf16: Vec<u16> = cand_str.encode_utf16().collect();
+            if state.show_pinyin_tone {
+                let tone_line_h = tone_fs + 2;
+                let tone_hanzi_gap = 1;
+                let hanzi_line_h = fs + 2;
+                let cand_row_h = tone_line_h + tone_hanzi_gap + hanzi_line_h + 4;
 
-                let mut size: SIZE = std::mem::zeroed();
-                GetTextExtentPoint32W(hdc, cand_utf16.as_ptr(), cand_utf16.len() as i32, &mut size);
-                let item_text_width = size.cx;
+                for i in start..end {
+                    let cand = &state.candidates[i];
+                    let cand_text = if state.variant == "Traditional" {
+                        convert_s2t(&cand.text)
+                    } else {
+                        cand.text.clone()
+                    };
+                    let tone_str = crate::engine::chinese::pinyin_tone::get_pinyin_with_tone(&cand_text, &cand.pinyin);
+                    let num = (i - start) + 1;
+                    let num_str = format!("{}.", num);
 
-                // Highlight candidate 1, others in secondary color
-                if i == start {
-                    SetTextColor(hdc, cand1_color);
-                } else {
-                    SetTextColor(hdc, cand_other_color);
+                    // Measure num and cand_text
+                    SelectObject(hdc, h_font_cand);
+                    let num_utf16: Vec<u16> = num_str.encode_utf16().collect();
+                    let mut num_sz: SIZE = std::mem::zeroed();
+                    GetTextExtentPoint32W(hdc, num_utf16.as_ptr(), num_utf16.len() as i32, &mut num_sz);
+
+                    let cand_utf16: Vec<u16> = cand_text.encode_utf16().collect();
+                    let mut cand_sz: SIZE = std::mem::zeroed();
+                    GetTextExtentPoint32W(hdc, cand_utf16.as_ptr(), cand_utf16.len() as i32, &mut cand_sz);
+
+                    // Measure tone_str
+                    let mut tone_sz: SIZE = std::mem::zeroed();
+                    let tone_utf16: Vec<u16> = tone_str.encode_utf16().collect();
+                    if let Some(font_tone) = h_font_tone {
+                        SelectObject(hdc, font_tone);
+                        GetTextExtentPoint32W(hdc, tone_utf16.as_ptr(), tone_utf16.len() as i32, &mut tone_sz);
+                    }
+
+                    let core_w = cand_sz.cx.max(tone_sz.cx);
+                    let item_w = num_sz.cx + core_w;
+
+                    let is_first = i == start;
+                    let c_text = if is_first { cand1_color } else { cand_other_color };
+                    let c_tone = if is_first { tone1_color } else { tone_other_color };
+
+                    // 1. Draw tone (centered horizontally above Hanzi)
+                    if let Some(font_tone) = h_font_tone {
+                        SelectObject(hdc, font_tone);
+                        SetTextColor(hdc, c_tone);
+                        let tone_x = cur_x + num_sz.cx + (core_w - tone_sz.cx) / 2;
+                        let mut tone_rect = RECT {
+                            left: tone_x,
+                            top: cand_top,
+                            right: tone_x + tone_sz.cx,
+                            bottom: cand_top + tone_line_h,
+                        };
+                        DrawTextW(
+                            hdc,
+                            tone_utf16.as_ptr(),
+                            tone_utf16.len() as i32,
+                            &mut tone_rect,
+                            DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX,
+                        );
+                    }
+
+                    // 2. Draw number prefix (aligned with Hanzi)
+                    SelectObject(hdc, h_font_cand);
+                    SetTextColor(hdc, c_text);
+                    let hanzi_y = cand_top + tone_line_h + tone_hanzi_gap;
+                    let mut num_rect = RECT {
+                        left: cur_x,
+                        top: hanzi_y,
+                        right: cur_x + num_sz.cx,
+                        bottom: hanzi_y + hanzi_line_h,
+                    };
+                    DrawTextW(
+                        hdc,
+                        num_utf16.as_ptr(),
+                        num_utf16.len() as i32,
+                        &mut num_rect,
+                        DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX,
+                    );
+
+                    // 3. Draw Hanzi text (centered under tone)
+                    let hanzi_x = cur_x + num_sz.cx + (core_w - cand_sz.cx) / 2;
+                    let mut hanzi_rect = RECT {
+                        left: hanzi_x,
+                        top: hanzi_y,
+                        right: hanzi_x + cand_sz.cx,
+                        bottom: hanzi_y + hanzi_line_h,
+                    };
+                    DrawTextW(
+                        hdc,
+                        cand_utf16.as_ptr(),
+                        cand_utf16.len() as i32,
+                        &mut hanzi_rect,
+                        DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX,
+                    );
+
+                    // Click rect
+                    let click_rect = RECT {
+                        left: cur_x,
+                        top: cand_top,
+                        right: cur_x + item_w + cand_item_gap,
+                        bottom: cand_top + cand_row_h,
+                    };
+                    local_rects.push((i, click_rect));
+
+                    cur_x += item_w + cand_item_gap;
                 }
+            } else {
+                SelectObject(hdc, h_font_cand);
+                let cand_bottom = cand_top + cand_fs + 8;
+                for i in start..end {
+                    let cand_text = if state.variant == "Traditional" {
+                        convert_s2t(&state.candidates[i].text)
+                    } else {
+                        state.candidates[i].text.clone()
+                    };
+                    let num = (i - start) + 1;
+                    let cand_str = format!("{}.{}", num, cand_text);
+                    let cand_utf16: Vec<u16> = cand_str.encode_utf16().collect();
 
-                let mut cand_rect = RECT {
-                    left: cur_x,
-                    top: cand_top,
-                    right: cur_x + item_text_width,
-                    bottom: cand_bottom,
-                };
-                DrawTextW(
-                    hdc,
-                    cand_utf16.as_ptr(),
-                    cand_utf16.len() as i32,
-                    &mut cand_rect,
-                    DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX,
-                );
+                    let mut size: SIZE = std::mem::zeroed();
+                    GetTextExtentPoint32W(hdc, cand_utf16.as_ptr(), cand_utf16.len() as i32, &mut size);
+                    let item_text_width = size.cx;
 
-                // Save bounding box for mouse click & hover (covers item + half gap)
-                let click_rect = RECT {
-                    left: cur_x,
-                    top: cand_top,
-                    right: cur_x + item_text_width + cand_item_gap,
-                    bottom: cand_bottom,
-                };
-                local_rects.push((i, click_rect));
+                    // Highlight candidate 1, others in secondary color
+                    if i == start {
+                        SetTextColor(hdc, cand1_color);
+                    } else {
+                        SetTextColor(hdc, cand_other_color);
+                    }
 
-                cur_x += item_text_width + cand_item_gap;
+                    let mut cand_rect = RECT {
+                        left: cur_x,
+                        top: cand_top,
+                        right: cur_x + item_text_width,
+                        bottom: cand_bottom,
+                    };
+                    DrawTextW(
+                        hdc,
+                        cand_utf16.as_ptr(),
+                        cand_utf16.len() as i32,
+                        &mut cand_rect,
+                        DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX,
+                    );
+
+                    // Save bounding box for mouse click & hover (covers item + half gap)
+                    let click_rect = RECT {
+                        left: cur_x,
+                        top: cand_top,
+                        right: cur_x + item_text_width + cand_item_gap,
+                        bottom: cand_bottom,
+                    };
+                    local_rects.push((i, click_rect));
+
+                    cur_x += item_text_width + cand_item_gap;
+                }
             }
             state.candidate_rects = local_rects;
 
@@ -836,6 +1010,9 @@ unsafe extern "system" fn cand_wnd_proc(
             DeleteObject(h_font_preedit);
             DeleteObject(h_font_page);
             DeleteObject(h_font_cand);
+            if let Some(font_tone) = h_font_tone {
+                DeleteObject(font_tone);
+            }
             SelectObject(hdc, old_pen);
             SelectObject(hdc, old_brush);
             DeleteObject(bg_brush);

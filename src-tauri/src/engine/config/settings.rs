@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
+fn default_true() -> bool {
+    true
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AppSettings {
     pub mode: String,                // "Vietnamese", "Chinese", "English"
@@ -21,6 +25,8 @@ pub struct AppSettings {
     pub chinese_learning: bool,
     pub chinese_punctuation: bool,
     pub chinese_jianpin: bool,
+    #[serde(default = "default_true")]
+    pub chinese_show_pinyin_tone: bool,
     pub vn_free_mark: bool,
     pub vn_auto_english_restore: bool,
     pub vn_spelling_check: bool,
@@ -51,6 +57,7 @@ impl Default for AppSettings {
             chinese_learning: true,
             chinese_punctuation: true,
             chinese_jianpin: true,
+            chinese_show_pinyin_tone: true,
             vn_free_mark: true,
             vn_auto_english_restore: true,
             vn_spelling_check: true,

@@ -117,6 +117,7 @@ fn save_settings(settings: AppSettings) -> Result<(), String> {
         cand_state.page_size = settings.cand_page_size;
         cand_state.font_size = settings.cand_font_size;
         cand_state.theme = settings.theme.clone();
+        cand_state.show_pinyin_tone = settings.chinese_show_pinyin_tone;
     }
     // Apply Windows autostart registry entry
     apply_autostart(settings.run_on_startup)?;
@@ -350,6 +351,7 @@ pub fn run() {
                 cand_state.page_size = saved_settings.cand_page_size;
                 cand_state.font_size = saved_settings.cand_font_size;
                 cand_state.theme = saved_settings.theme.clone();
+                cand_state.show_pinyin_tone = saved_settings.chinese_show_pinyin_tone;
             }
 
             // Start the Win32 low-level keyboard hook

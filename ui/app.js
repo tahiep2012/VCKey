@@ -39,6 +39,7 @@ async function loadData() {
     document.getElementById('chkChinesePunctuation').checked = currentSettings.chinese_punctuation ?? true;
     document.getElementById('chkEmoji').checked = currentSettings.chinese_emoji ?? true;
     document.getElementById('chkTraditional').checked = currentSettings.traditional_chinese ?? false;
+    document.getElementById('chkShowPinyinTone').checked = currentSettings.chinese_show_pinyin_tone ?? true;
     document.getElementById('chkRunOnStartup').checked = currentSettings.run_on_startup ?? false;
     document.getElementById('chkMinimizeToTray').checked = currentSettings.minimize_to_tray ?? true;
     document.getElementById('chkShowOsd').checked = currentSettings.show_osd_toast ?? true;
@@ -177,6 +178,7 @@ document.getElementById('btnApply').addEventListener('click', async () => {
     chinese_punctuation: document.getElementById('chkChinesePunctuation').checked,
     chinese_emoji: document.getElementById('chkEmoji').checked,
     traditional_chinese: document.getElementById('chkTraditional').checked,
+    chinese_show_pinyin_tone: document.getElementById('chkShowPinyinTone').checked,
     run_on_startup: document.getElementById('chkRunOnStartup').checked,
     minimize_to_tray: document.getElementById('chkMinimizeToTray').checked,
     show_osd_toast: document.getElementById('chkShowOsd').checked,

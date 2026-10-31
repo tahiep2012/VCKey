@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCKey Mockup - Ô Gợi Ý Pinyin Có Dấu</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+    }
+    .chinese-font {
+      font-family: "Microsoft YaHei", "PingFang SC", "Heiti SC", sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 p-4 md:p-8 min-h-screen antialiased flex flex-col items-center">
+
+  <div class="max-w-5xl w-full space-y-6">
+
+    <!-- Header Section -->
+    <header class="text-center space-y-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-semibold uppercase tracking-wider">
+        <span>Bản Xem Trước Thiết Kế (Mockup)</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+        Ô Gợi Ý Chữ Hán Kèm Phiên Âm Pinyin Có Dấu
+      </h1>
+      <p class="text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+        Hiển thị trực quan thanh điệu của từng chữ Hán ngay khi gõ phiên âm Pinyin, giúp người dùng nhận diện ngữ nghĩa và phát âm chuẩn xác.
+      </p>
+    </header>
+
+    <!-- Interactive Controls Bar -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Từ mẫu thử nghiệm:</span>
+        <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 p-1 rounded-xl">
+          <button onclick="setSample('ni')" id="btn-sample-ni" class="px-3 py-1 text-xs font-semibold rounded-lg bg-blue-600 text-white shadow-xs transition-colors">ni</button>
+          <button onclick="setSample('nihao')" id="btn-sample-nihao" class="px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors">nihao</button>
+          <button onclick="setSample('xiexie')" id="btn-sample-xiexie" class="px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors">xiexie</button>
+          <button onclick="setSample('zhongguo')" id="btn-sample-zhongguo" class="px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors">zhongguo</button>
+          <button onclick="setSample('cangkubu')" id="btn-sample-cangkubu" class="px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors">cangkubu</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Variant Switcher -->
+        <button onclick="toggleVariant()" id="btnVariant" class="px-3 py-1.5 text-xs font-semibold rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 flex items-center gap-1.5 transition-colors">
+          <span>Chế độ:</span> <span id="lblVariant">Giản thể [简]</span>
+        </button>
+
+        <!-- Theme Switcher -->
+        <button onclick="toggleTheme()" class="px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-colors">
+          <span id="themeIcon">🌓</span> <span id="themeLabel">Giao diện sáng</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN COMPARISON GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- ================= PHƯƠNG ÁN 1: RUBY STACKED ================= -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md border-2 border-blue-500/80 dark:border-blue-500/80 overflow-hidden flex flex-col relative">
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 px-5 py-3 border-b border-blue-200 dark:border-blue-900 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+              <h3 class="text-sm font-bold text-blue-900 dark:text-blue-100">Phương Án 1: Phiên Âm Trên Đỉnh Chữ Hán (Khuyên dùng)</h3>
+            </div>
+            <p class="text-xs text-blue-700 dark:text-blue-300 mt-0.5">Kiểu Ruby / Zhuyin chuẩn học thuật, gọn gàng, không làm nở rộng chiều ngang</p>
+          </div>
+          <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-600 text-white shadow-xs">Tối ưu</span>
+        </div>
+
+        <div class="p-6 flex-1 flex flex-col justify-between space-y-6">
+          <!-- Simulation Viewport -->
+          <div class="space-y-3">
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <span>Mô phỏng thực tế khi soạn thảo văn bản:</span>
+              <span class="text-[11px] text-slate-400">Tọa độ nổi theo con trỏ</span>
+            </div>
+
+            <!-- Fake Editor Box -->
+            <div class="relative bg-slate-50 dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 min-h-[160px] flex flex-col justify-start">
+              <div class="text-sm text-slate-700 dark:text-slate-300 font-mono flex items-center gap-1">
+                <span>anything, @ to mention, / for actions</span>
+                <span class="w-0.5 h-4 bg-blue-600 animate-pulse inline-block"></span>
+              </div>
+
+              <!-- FLOATING CANDIDATE WINDOW 1 -->
+              <div class="mt-4 self-start shadow-xl rounded-xl border border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 overflow-hidden transition-all duration-200" style="min-width: 280px;">
+                <!-- Header: Preedit & Page -->
+                <div class="px-3 py-1.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 text-xs">
+                  <span id="p1-preedit" class="font-bold text-blue-600 dark:text-blue-400 font-sans tracking-wide">ni</span>
+                  <div class="flex items-center gap-2 text-slate-400 dark:text-slate-500 font-sans">
+                    <span class="hover:text-blue-600 cursor-pointer">◀</span>
+                    <span class="text-slate-600 dark:text-slate-300 font-medium">1/7</span>
+                    <span class="hover:text-blue-600 cursor-pointer">▶</span>
+                    <span class="font-bold text-amber-600 dark:text-amber-400 variant-badge">[简]</span>
+                  </div>
+                </div>
+
+                <!-- Candidates Row with Ruby Tones -->
+                <div id="p1-candidates" class="px-3.5 py-2 flex items-end gap-3.5 chinese-font select-none">
+                  <!-- Dynamically Rendered -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Highlights -->
+          <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200/70 dark:border-slate-700">
+              <div class="font-semibold text-slate-800 dark:text-slate-200">Độ cao thanh gợi ý</div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tăng nhẹ +10px để xếp Pinyin thanh thoát trên đầu từng chữ</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200/70 dark:border-slate-700">
+              <div class="font-semibold text-slate-800 dark:text-slate-200">Chiều ngang thanh gợi ý</div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Bảo toàn kích thước gọn gàng, không bị tràn màn hình</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PHƯƠNG ÁN 2: INLINE CÙNG HÀNG ================= -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col relative">
+        <div class="bg-slate-50 dark:bg-slate-850 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+              <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">Phương Án 2: Phiên Âm Cùng Hàng Ngang (Inline)</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pinyin có dấu đặt cạnh chữ Hán, giữ nguyên chiều cao khung gợi ý</p>
+          </div>
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Tùy chọn</span>
+        </div>
+
+        <div class="p-6 flex-1 flex flex-col justify-between space-y-6">
+          <!-- Simulation Viewport -->
+          <div class="space-y-3">
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <span>Mô phỏng thực tế khi soạn thảo văn bản:</span>
+              <span class="text-[11px] text-slate-400">Tọa độ nổi theo con trỏ</span>
+            </div>
+
+            <!-- Fake Editor Box -->
+            <div class="relative bg-slate-50 dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700 min-h-[160px] flex flex-col justify-start">
+              <div class="text-sm text-slate-700 dark:text-slate-300 font-mono flex items-center gap-1">
+                <span>anything, @ to mention, / for actions</span>
+                <span class="w-0.5 h-4 bg-blue-600 animate-pulse inline-block"></span>
+              </div>
+
+              <!-- FLOATING CANDIDATE WINDOW 2 -->
+              <div class="mt-4 self-start shadow-xl rounded-xl border border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 overflow-hidden transition-all duration-200" style="min-width: 280px;">
+                <!-- Header: Preedit & Page -->
+                <div class="px-3 py-1.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 text-xs">
+                  <span id="p2-preedit" class="font-bold text-blue-600 dark:text-blue-400 font-sans tracking-wide">ni</span>
+                  <div class="flex items-center gap-2 text-slate-400 dark:text-slate-500 font-sans">
+                    <span class="hover:text-blue-600 cursor-pointer">◀</span>
+                    <span class="text-slate-600 dark:text-slate-300 font-medium">1/7</span>
+                    <span class="hover:text-blue-600 cursor-pointer">▶</span>
+                    <span class="font-bold text-amber-600 dark:text-amber-400 variant-badge">[简]</span>
+                  </div>
+                </div>
+
+                <!-- Candidates Row with Inline Tones -->
+                <div id="p2-candidates" class="px-3.5 py-2 flex items-center gap-3 chinese-font select-none">
+                  <!-- Dynamically Rendered -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Highlights -->
+          <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200/70 dark:border-slate-700">
+              <div class="font-semibold text-slate-800 dark:text-slate-200">Độ cao thanh gợi ý</div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Giữ nguyên 100% chiều cao mỏng chuẩn 42px như hiện tại</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200/70 dark:border-slate-700">
+              <div class="font-semibold text-slate-800 dark:text-slate-200">Chiều ngang thanh gợi ý</div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Chiều ngang dài hơn do Pinyin chiếm thêm diện tích trên dòng</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SO SÁNH TRỰC DIỆN: TRƯỚC ĐÂY VS ĐỀ XUẤT MỚI -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/80 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span>🔍</span> So Sánh Trực Diện Với Giao Diện Hiện Tại Trên Máy
+        </h3>
+        <span class="text-xs text-slate-500 dark:text-slate-400">Dựa trên ảnh chụp thực tế màn hình</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Before -->
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/50 px-2 py-0.5 rounded">Giao diện hiện tại (Chưa có Pinyin)</span>
+            <span class="text-xs text-slate-400">Ảnh chụp trên màn hình</span>
+          </div>
+          <!-- Box Current -->
+          <div class="shadow-sm rounded-lg border border-blue-500 bg-white dark:bg-slate-900 p-2 text-xs">
+            <div class="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1 mb-1.5 text-slate-400">
+              <span class="font-bold text-blue-600 font-sans">ni</span>
+              <span class="font-sans">◀ 1/7 ▶ <span class="text-amber-600 font-bold">[简]</span></span>
+            </div>
+            <div class="text-sm font-medium text-slate-800 dark:text-slate-200 chinese-font">
+              <span class="font-bold text-blue-700 dark:text-blue-400">1.你</span>
+              <span class="ml-2.5">2.拟</span>
+              <span class="ml-2.5">3.泥</span>
+              <span class="ml-2.5">4.呢</span>
+              <span class="ml-2.5">5.尼</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Không có dấu thanh điệu, người mới học tiếng Trung hoặc cần kiểm tra phát âm sẽ khó phân biệt chữ nào đọc thanh mấy.</p>
+        </div>
+
+        <!-- After -->
+        <div class="p-4 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/80 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 px-2 py-0.5 rounded">Đề xuất mới (Có phiên âm Pinyin kèm dấu)</span>
+            <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">Trực quan 100%</span>
+          </div>
+          <!-- Box Proposed (Ruby Style) -->
+          <div class="shadow-sm rounded-lg border border-blue-600 bg-white dark:bg-slate-900 p-2 text-xs">
+            <div class="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1 mb-1 text-slate-400">
+              <span class="font-bold text-blue-600 font-sans">ni</span>
+              <span class="font-sans">◀ 1/7 ▶ <span class="text-amber-600 font-bold">[简]</span></span>
+            </div>
+            <div class="flex items-end gap-3 chinese-font">
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] text-blue-600 dark:text-blue-400 font-mono font-bold leading-none mb-0.5">nǐ</span>
+                <span class="text-sm font-bold text-blue-700 dark:text-blue-400 leading-none">1.你</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono leading-none mb-0.5">nǐ</span>
+                <span class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-none">2.拟</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono leading-none mb-0.5">ní</span>
+                <span class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-none">3.泥</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono leading-none mb-0.5">ne</span>
+                <span class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-none">4.呢</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono leading-none mb-0.5">ní</span>
+                <span class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-none">5.尼</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Nhìn rõ ngay <code>你</code> đọc là <code>nǐ</code> (thanh 3), <code>泥</code> đọc là <code>ní</code> (thanh 2), <code>呢</code> đọc là <code>ne</code> (thanh nhẹ). Rất thuận tiện và chính xác.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPOSED SETTINGS IN VCKEY DASHBOARD -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/80 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>🇨🇳</span> Tích Hợp Tùy Chọn Trong Bảng Điều Khiển VCKey (Tab Tiếng Trung)
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Cho phép người dùng chủ động bật/tắt tính năng theo nhu cầu gõ</p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">Linh hoạt</span>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Setting Row 1: Master Toggle -->
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200/80 dark:border-slate-700">
+          <div>
+            <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">Hiển thị phiên âm Pinyin có dấu trên ô gợi ý</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Gợi ý kèm thanh điệu (ā, á, ǎ, à) cho từng chữ Hán</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="mockup-toggle-pinyin" checked class="sr-only peer" />
+            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+
+        <!-- Setting Row 2: Layout Style Selection -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200/80 dark:border-slate-700 gap-3">
+          <div>
+            <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">Kiểu bố cục phiên âm</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Chọn phong cách hiển thị phù hợp với thị giác</div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 sm:w-72">
+            <label class="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-blue-500 bg-blue-50/70 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-semibold text-xs cursor-pointer">
+              <input type="radio" name="pinyinLayout" checked class="text-blue-600 focus:ring-0" />
+              <span>Trên đỉnh (Ruby)</span>
+            </label>
+            <label class="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs cursor-pointer">
+              <input type="radio" name="pinyinLayout" class="text-blue-600 focus:ring-0" />
+              <span>Cùng hàng (Inline)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Sample Data dictionary with Hanzi and Pinyin with tones
+    const SAMPLES = {
+      ni: {
+        preedit: "ni",
+        cands: [
+          { num: 1, hanzi: "你", tone: "nǐ", traditional: "你" },
+          { num: 2, hanzi: "拟", tone: "nǐ", traditional: "擬" },
+          { num: 3, hanzi: "泥", tone: "ní", traditional: "泥" },
+          { num: 4, hanzi: "呢", tone: "ne", traditional: "呢" },
+          { num: 5, hanzi: "尼", tone: "ní", traditional: "尼" }
+        ]
+      },
+      nihao: {
+        preedit: "nihao",
+        cands: [
+          { num: 1, hanzi: "你好", tone: "nǐ hǎo", traditional: "你好" },
+          { num: 2, hanzi: "拟好", tone: "nǐ hǎo", traditional: "擬好" },
+          { num: 3, hanzi: "泥好", tone: "ní hǎo", traditional: "泥好" },
+          { num: 4, hanzi: "倪浩", tone: "ní hào", traditional: "倪浩" },
+          { num: 5, hanzi: "逆好", tone: "nì hǎo", traditional: "逆好" }
+        ]
+      },
+      xiexie: {
+        preedit: "xiexie",
+        cands: [
+          { num: 1, hanzi: "谢谢", tone: "xiè xie", traditional: "謝謝" },
+          { num: 2, hanzi: "写写", tone: "xiě xie", traditional: "寫寫" },
+          { num: 3, hanzi: "些些", tone: "xiē xiē", traditional: "些些" },
+          { num: 4, hanzi: "屑屑", tone: "xiè xiè", traditional: "屑屑" },
+          { num: 5, hanzi: "斜斜", tone: "xié xié", traditional: "斜斜" }
+        ]
+      },
+      zhongguo: {
+        preedit: "zhongguo",
+        cands: [
+          { num: 1, hanzi: "中国", tone: "zhōng guó", traditional: "中國" },
+          { num: 2, hanzi: "钟过", tone: "zhōng guò", traditional: "鐘過" },
+          { num: 3, hanzi: "重过", tone: "zhòng guò", traditional: "重過" },
+          { num: 4, hanzi: "中果", tone: "zhōng guǒ", traditional: "中果" },
+          { num: 5, hanzi: "忠国", tone: "zhōng guó", traditional: "忠國" }
+        ]
+      },
+      cangkubu: {
+        preedit: "cangkubu",
+        cands: [
+          { num: 1, hanzi: "仓库部", tone: "cāng kù bù", traditional: "倉庫部" },
+          { num: 2, hanzi: "仓库存", tone: "cāng kù cún", traditional: "庫存部" },
+          { num: 3, hanzi: "苍库布", tone: "cāng kù bù", traditional: "蒼庫布" }
+        ]
+      }
+    };
+
+    let currentSampleKey = "ni";
+    let isTraditional = false;
+    let isDarkMode = false;
+
+    function renderMockups() {
+      const data = SAMPLES[currentSampleKey];
+
+      // Update preedit labels
+      document.getElementById("p1-preedit").textContent = data.preedit;
+      document.getElementById("p2-preedit").textContent = data.preedit;
+
+      // Render P1 (Ruby Stacked)
+      const p1Container = document.getElementById("p1-candidates");
+      p1Container.innerHTML = "";
+      data.cands.forEach((item, idx) => {
+        const text = isTraditional ? item.traditional : item.hanzi;
+        const isFirst = idx === 0;
+
+        const col = document.createElement("div");
+        col.className = "flex flex-col items-center group cursor-pointer transition-transform hover:scale-105";
+
+        const toneEl = document.createElement("span");
+        toneEl.className = isFirst
+          ? "text-[11px] font-mono font-bold text-blue-600 dark:text-blue-400 leading-none mb-1 tracking-wider"
+          : "text-[11px] font-mono text-slate-400 dark:text-slate-500 leading-none mb-1 tracking-wider group-hover:text-slate-600 dark:group-hover:text-slate-300";
+        toneEl.textContent = item.tone;
+
+        const hanziEl = document.createElement("span");
+        hanziEl.className = isFirst
+          ? "text-base font-bold text-blue-700 dark:text-blue-400 leading-none flex items-center"
+          : "text-base font-normal text-slate-800 dark:text-slate-200 leading-none flex items-center group-hover:text-blue-600";
+        hanziEl.innerHTML = `<span class="text-xs mr-0.5 opacity-60">${item.num}.</span>${text}`;
+
+        col.appendChild(toneEl);
+        col.appendChild(hanziEl);
+        p1Container.appendChild(col);
+      });
+
+      // Render P2 (Inline)
+      const p2Container = document.getElementById("p2-candidates");
+      p2Container.innerHTML = "";
+      data.cands.forEach((item, idx) => {
+        const text = isTraditional ? item.traditional : item.hanzi;
+        const isFirst = idx === 0;
+
+        const itemBox = document.createElement("div");
+        itemBox.className = "flex items-baseline gap-1 cursor-pointer group transition-transform hover:scale-105";
+
+        const hanziSpan = document.createElement("span");
+        hanziSpan.className = isFirst
+          ? "text-base font-bold text-blue-700 dark:text-blue-400 leading-none"
+          : "text-base font-normal text-slate-800 dark:text-slate-200 leading-none group-hover:text-blue-600";
+        hanziSpan.innerHTML = `<span class="text-xs mr-0.5 opacity-60">${item.num}.</span>${text}`;
+
+        const toneSpan = document.createElement("span");
+        toneSpan.className = isFirst
+          ? "text-xs font-mono font-semibold text-blue-500 dark:text-blue-400"
+          : "text-xs font-mono text-slate-400 dark:text-slate-500 group-hover:text-slate-600";
+        toneSpan.textContent = item.tone;
+
+        itemBox.appendChild(hanziSpan);
+        itemBox.appendChild(toneSpan);
+        p2Container.appendChild(itemBox);
+      });
+
+      // Update badge
+      document.querySelectorAll(".variant-badge").forEach(el => {
+        el.textContent = isTraditional ? "[繁]" : "[简]";
+      });
+      document.getElementById("lblVariant").textContent = isTraditional ? "Phồn thể [繁]" : "Giản thể [简]";
+    }
+
+    function setSample(key) {
+      currentSampleKey = key;
+      ['ni', 'nihao', 'xiexie', 'zhongguo', 'cangkubu'].forEach(k => {
+        const btn = document.getElementById(`btn-sample-${k}`);
+        if (k === key) {
+          btn.className = "px-3 py-1 text-xs font-semibold rounded-lg bg-blue-600 text-white shadow-xs transition-colors";
+        } else {
+          btn.className = "px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors";
+        }
+      });
+      renderMockups();
+    }
+
+    function toggleVariant() {
+      isTraditional = !isTraditional;
+      renderMockups();
+    }
+
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').textContent = "☀️";
+        document.getElementById('themeLabel').textContent = "Giao diện tối";
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').textContent = "🌙";
+        document.getElementById('themeLabel').textContent = "Giao diện sáng";
+      }
+    }
+
+    // Initial render
+    renderMockups();
+  </script>
+</body>
+</html>
