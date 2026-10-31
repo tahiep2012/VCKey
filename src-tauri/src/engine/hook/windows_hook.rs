@@ -53,6 +53,9 @@ pub struct HookState {
     pub alt_down: bool,
     pub win_down: bool,
     pub shift_down: bool,
+    // Timestamp trackers for idle timeout and history expiration (UniKey / EVKey standard)
+    pub last_keystroke_time: Option<std::time::Instant>,
+    pub last_backspace_time: Option<std::time::Instant>,
 }
 
 impl HookState {
@@ -60,6 +63,8 @@ impl HookState {
         self.vn_raw_word.clear();
         self.vn_displayed_str.clear();
         self.vn_word_history.clear();
+        self.last_keystroke_time = None;
+        self.last_backspace_time = None;
     }
 
     pub fn reset_modifiers(&mut self) {
@@ -96,6 +101,8 @@ impl Default for HookState {
             alt_down: false,
             win_down: false,
             shift_down: false,
+            last_keystroke_time: None,
+            last_backspace_time: None,
         }
     }
 }
@@ -186,15 +193,26 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
 
     if is_ctrl {
         state.ctrl_down = is_down;
+    } else if (GetAsyncKeyState(VK_CONTROL as i32) as u16 & 0x8000) == 0 {
+        state.ctrl_down = false;
     }
+
     if is_shift {
         state.shift_down = is_down;
+    } else if (GetAsyncKeyState(VK_SHIFT as i32) as u16 & 0x8000) == 0 {
+        state.shift_down = false;
     }
+
     if is_alt {
         state.alt_down = is_down;
+    } else if (GetAsyncKeyState(VK_MENU as i32) as u16 & 0x8000) == 0 {
+        state.alt_down = false;
     }
+
     if is_win {
         state.win_down = is_down;
+    } else if (GetAsyncKeyState(0x5B) as u16 & 0x8000) == 0 && (GetAsyncKeyState(0x5C) as u16 & 0x8000) == 0 {
+        state.win_down = false;
     }
 
     // Double validation: combine hook-tracked state with GetAsyncKeyState to permanently eliminate ghost stuck keys
@@ -266,6 +284,26 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
 
     // --- B. VIETNAMESE TELEX MODE ---
     if state.mode == "Vietnamese" {
+        let now = std::time::Instant::now();
+
+        // 0. Keystroke Idle Timeout (1.2s - 1.5s: UniKey / EVKey industry standard):
+        // If user pauses typing for > 1200ms, assume the previous word/sentence ended
+        // and cleanly flush the Vietnamese word buffers to prevent stale ghost words from blocking diacritics.
+        if let Some(last_time) = state.last_keystroke_time {
+            if now.duration_since(last_time).as_millis() > 1200 {
+                state.reset_vietnamese_buffers();
+            }
+        }
+        state.last_keystroke_time = Some(now);
+
+        // Word history expiration: if last backspace was more than 2500ms ago, flush history
+        if let Some(last_bs) = state.last_backspace_time {
+            if now.duration_since(last_bs).as_millis() > 2500 {
+                state.vn_word_history.clear();
+                state.last_backspace_time = None;
+            }
+        }
+
         // Space key: push current word into history stack, track consecutive spaces
         if vk_code == VK_SPACE {
             if !state.vn_raw_word.is_empty() {
@@ -275,7 +313,7 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
                     spaces_after: 1,
                 };
                 state.vn_word_history.push(entry);
-                if state.vn_word_history.len() > 30 {
+                if state.vn_word_history.len() > 5 {
                     state.vn_word_history.remove(0);
                 }
                 state.vn_raw_word.clear();
@@ -306,6 +344,7 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
 
         // Backspace: handle rollback within word and cross-word backspace restoration
         if vk_code == VK_BACK {
+            state.last_backspace_time = Some(now);
             if !state.vn_raw_word.is_empty() {
                 let curr_len = state.vn_displayed_str.chars().count();
                 let target_len = curr_len.saturating_sub(1);
@@ -393,9 +432,10 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
         }
 
         if let Some(ch) = key_char {
-            // Self-healing: if buffer reaches 15 chars, it cannot be a single valid Vietnamese syllable.
+            // Self-healing: if buffer reaches 9 chars, it cannot be a single valid Vietnamese syllable.
+            // (Longest raw Vietnamese syllable is ~7-8 chars, e.g. "nghiengs", "khuyeens").
             // Reset buffer to prevent corrupted/stale buffer from permanently blocking diacritics.
-            if state.vn_raw_word.chars().count() >= 15 {
+            if state.vn_raw_word.chars().count() >= 9 {
                 state.reset_vietnamese_buffers();
             }
             state.vn_raw_word.push(ch);
@@ -1140,22 +1180,84 @@ mod tests {
     fn test_self_healing_buffer_boundary() {
         let mut state = HookState::default();
 
-        // Simulate typing a long string (16 chars) without space (e.g. from pasting or missed reset)
-        for c in "abcdefghijklmnop".chars() {
-            if state.vn_raw_word.chars().count() >= 15 {
+        // Simulate typing a long string without space (e.g. from pasting or missed reset)
+        // With threshold = 9, typing 10 characters triggers self-healing
+        for c in "abcdefghij".chars() {
+            if state.vn_raw_word.chars().count() >= 9 {
                 state.reset_vietnamese_buffers();
             }
             simulate_type(&mut state, c);
         }
 
-        // Buffer self-healed and only has the latest character 'p'
-        assert_eq!(state.vn_raw_word, "p");
+        // Buffer self-healed and only has the latest character 'j'
+        assert_eq!(state.vn_raw_word, "j");
 
-        // Now type a Vietnamese syllable: "hojc" -> "học"
+        // Clear and type a Vietnamese syllable: "hojc" -> "học"
+        state.reset_vietnamese_buffers();
         for c in "hojc".chars() {
             simulate_type(&mut state, c);
         }
-        assert_eq!(state.vn_displayed_str, "phọc");
+        assert_eq!(state.vn_displayed_str, "học");
+    }
+
+    #[test]
+    fn test_keystroke_idle_timeout() {
+        let mut state = HookState::default();
+
+        // Type a word "chao"
+        for c in "chao".chars() {
+            simulate_type(&mut state, c);
+        }
+        assert_eq!(state.vn_displayed_str, "chao");
+        assert_eq!(state.vn_raw_word, "chao");
+
+        // Simulate 1.5 seconds idle time passing (> 1200ms)
+        state.last_keystroke_time = Some(std::time::Instant::now() - std::time::Duration::from_millis(1500));
+
+        let now = std::time::Instant::now();
+        if let Some(last_time) = state.last_keystroke_time {
+            if now.duration_since(last_time).as_millis() > 1200 {
+                state.reset_vietnamese_buffers();
+            }
+        }
+        state.last_keystroke_time = Some(now);
+
+        // Buffer is cleanly reset
+        assert_eq!(state.vn_raw_word, "");
+        assert_eq!(state.vn_displayed_str, "");
+
+        // Next word types fresh with diacritics
+        for c in "hoas".chars() {
+            simulate_type(&mut state, c);
+        }
+        assert_eq!(state.vn_displayed_str, "hóa");
+    }
+
+    #[test]
+    fn test_history_capped_at_five() {
+        let mut state = HookState::default();
+
+        for i in 1..=10 {
+            for c in format!("word{}", i).chars() {
+                simulate_type(&mut state, c);
+            }
+            let entry = WordEntry {
+                raw: state.vn_raw_word.clone(),
+                displayed: state.vn_displayed_str.clone(),
+                spaces_after: 1,
+            };
+            state.vn_word_history.push(entry);
+            if state.vn_word_history.len() > 5 {
+                state.vn_word_history.remove(0);
+            }
+            state.vn_raw_word.clear();
+            state.vn_displayed_str.clear();
+        }
+
+        // History is capped at exactly 5
+        assert_eq!(state.vn_word_history.len(), 5);
+        assert_eq!(state.vn_word_history.last().unwrap().raw, "word10");
+        assert_eq!(state.vn_word_history.first().unwrap().raw, "word6");
     }
 }
 
