@@ -1,21 +1,104 @@
 {
-  "em": [
-    "饿吗"
+  "chengpincangwocailiao": [
+    "成品仓我材料"
   ],
-  "nihaoma": [
-    "你好吗"
+  "kaixin": [
+    "开心"
+  ],
+  "haonihao": [
+    "好你好"
+  ],
+  "nihaonihao": [
+    "你好你好"
+  ],
+  "ai": [
+    "爱"
+  ],
+  "af": [
+    "阿芳"
+  ],
+  "ok": [
+    "欧卡"
+  ],
+  "ni": [
+    "你"
+  ],
+  "nihaojintian": [
+    "你好今天"
+  ],
+  "tao": [
+    "套"
+  ],
+  "xiexie": [
+    "谢谢"
+  ],
+  "nihaowohao": [
+    "你好我好"
+  ],
+  "guan": [
+    "关"
+  ],
+  "wohao": [
+    "我好"
+  ],
+  "nihao": [
+    "你好"
   ],
   "wozuijinhenhao": [
     "我最进很好"
   ],
-  "nihaomacangkubu": [
-    "你好吗仓库部"
+  "zicaibu": [
+    "紫菜部"
   ],
-  "cangkubucangku": [
-    "仓库部仓库"
+  "yiju": [
+    "一举"
   ],
-  "nihaonihao": [
-    "你好你好"
+  "xin": [
+    "新"
+  ],
+  "daj": [
+    "大南街"
+  ],
+  "jintian": [
+    "今天"
+  ],
+  "em": [
+    "饿吗"
+  ],
+  "sao": [
+    "扫"
+  ],
+  "wohen": [
+    "我很"
+  ],
+  "chengpincang": [
+    "成品仓"
+  ],
+  "wohenwohen": [
+    "我很我很"
+  ],
+  "woqu": [
+    "我去"
+  ],
+  "cangcailiaocang": [
+    "仓材料仓"
+  ],
+  "nihaocangkubu": [
+    "你好仓库簿"
+  ],
+  "cangchengpincangwo": [
+    "仓成品仓我"
+  ],
+  "cangkubu": [
+    "仓库簿",
+    "仓库不",
+    "仓库部"
+  ],
+  "nihaoma": [
+    "你好吗"
+  ],
+  "cailiaocang": [
+    "材料仓"
   ],
   "buwo": [
     "部我"
@@ -23,93 +106,22 @@
   "nihaowozuijinhenhao": [
     "你好我最进很好"
   ],
-  "zicaibu": [
-    "紫菜部"
-  ],
-  "ai": [
-    "爱"
-  ],
-  "haonihao": [
-    "好你好"
-  ],
-  "cangkubu": [
-    "仓库簿",
-    "仓库不",
-    "仓库部"
-  ],
-  "cangcailiaocang": [
-    "仓材料仓"
-  ],
-  "ni": [
-    "你"
-  ],
-  "yiju": [
-    "一举"
-  ],
-  "nihaocangkubu": [
-    "你好仓库簿"
-  ],
-  "af": [
-    "阿芳"
-  ],
-  "sao": [
-    "扫"
-  ],
-  "daj": [
-    "大南街"
-  ],
-  "woqu": [
-    "我去"
-  ],
-  "nihaojintian": [
-    "你好今天"
-  ],
-  "ok": [
-    "欧卡"
-  ],
-  "jintian": [
-    "今天"
-  ],
-  "nihao": [
-    "你好"
-  ],
-  "xiexie": [
-    "谢谢"
-  ],
-  "guan": [
-    "关"
-  ],
-  "kaixin": [
-    "开心"
-  ],
-  "xin": [
-    "新"
-  ],
-  "hao": [
-    "好"
-  ],
-  "cangchengpincangwo": [
-    "仓成品仓我"
-  ],
-  "tao": [
-    "套"
-  ],
   "cangkubucangkubu": [
     "仓库不仓库簿",
     "仓库不仓库部",
     "仓库部仓库不",
     "仓库部仓库部"
   ],
-  "chengpincang": [
-    "成品仓"
+  "hao": [
+    "好"
   ],
-  "chengpincangwocailiao": [
-    "成品仓我材料"
+  "cangkubucangku": [
+    "仓库部仓库"
   ],
   "nihaonihaoma": [
     "你好你好吗"
   ],
-  "cailiaocang": [
-    "材料仓"
+  "nihaomacangkubu": [
+    "你好吗仓库部"
   ]
 }

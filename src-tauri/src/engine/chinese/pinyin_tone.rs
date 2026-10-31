@@ -43,20 +43,32 @@ pub fn strip_tone(s: &str) -> String {
     res
 }
 
+/// Kiểm tra xem một ký tự có thuộc các dải mã CJK (bao gồm cả các dải mở rộng Extension A -> I) hay không
+pub fn is_cjk_char(c: char) -> bool {
+    ('\u{4e00}'..='\u{9fff}').contains(&c)
+        || ('\u{3400}'..='\u{4dbf}').contains(&c)
+        || ('\u{20000}'..='\u{2a6df}').contains(&c)
+        || ('\u{2a700}'..='\u{2b73f}').contains(&c)
+        || ('\u{2b740}'..='\u{2b81f}').contains(&c)
+        || ('\u{2b820}'..='\u{2ceaf}').contains(&c)
+        || ('\u{2ceb0}'..='\u{2ebe0}').contains(&c)
+        || ('\u{30000}'..='\u{3134f}').contains(&c)
+        || ('\u{31350}'..='\u{323af}').contains(&c)
+        || ('\u{f900}'..='\u{faff}').contains(&c)
+        || ('\u{2f800}'..='\u{2fa1f}').contains(&c)
+}
+
 /// Lấy phiên âm Pinyin có dấu cho một từ hoặc cụm từ chữ Hán,
 /// kết hợp với chuỗi pinyin người dùng đã gõ để phân giải chuẩn xác chữ đa âm (polyphone).
 pub fn get_pinyin_with_tone(word: &str, pinyin_input: &str) -> String {
-    let chars: Vec<char> = word.chars().filter(|&c| {
-        ('\u{4e00}'..='\u{9fff}').contains(&c) || ('\u{3400}'..='\u{4dbf}').contains(&c)
-    }).collect();
+    let clean_input = pinyin_input.to_lowercase().replace('\'', "");
+    let chars: Vec<char> = word.chars().filter(|&c| is_cjk_char(c)).collect();
 
     if chars.is_empty() {
-        return String::new();
+        return clean_input;
     }
 
-    let clean_input = pinyin_input.to_lowercase().replace('\'', "");
     let tokens = tokenize_pinyin(&clean_input);
-
     let mut result_parts = Vec::with_capacity(chars.len());
 
     if tokens.len() == chars.len() {
@@ -76,21 +88,29 @@ pub fn get_pinyin_with_tone(word: &str, pinyin_input: &str) -> String {
                     result_parts.push(readings[0]);
                 }
             } else {
-                result_parts.push("");
+                // Chữ Hán hiếm/mở rộng chưa có trong từ điển thanh điệu -> Dùng chính token âm tiết đã gõ
+                result_parts.push(tok.as_str());
             }
         }
     } else {
         // Fallback: Lấy phát âm mặc định chuẩn nhất cho từng chữ Hán
-        for &c in &chars {
+        for (i, &c) in chars.iter().enumerate() {
             if let Some(readings) = CHAR_PINYIN_MAP.get(&c) {
                 result_parts.push(readings[0]);
+            } else if i < tokens.len() {
+                result_parts.push(tokens[i].as_str());
             } else {
                 result_parts.push("");
             }
         }
     }
 
-    result_parts.join(" ")
+    let joined = result_parts.join(" ").trim().to_string();
+    if joined.is_empty() {
+        clean_input
+    } else {
+        joined
+    }
 }
 
 #[cfg(test)]
@@ -126,5 +146,16 @@ mod tests {
         assert_eq!(get_pinyin_with_tone("公司", "gs"), "gōng sī");
         assert_eq!(get_pinyin_with_tone("中国", "zg"), "zhōng guó");
         assert_eq!(get_pinyin_with_tone("北京", "bj"), "běi jīng");
+    }
+
+    #[test]
+    fn test_rare_extension_char_tones() {
+        // Test Extension E character \u{2c8f3} (candidate 5 of hen)
+        let res = get_pinyin_with_tone("\u{2c8f3}", "hen");
+        assert_eq!(res, "hen");
+        assert!(!res.is_empty());
+
+        // Test non-cjk or empty input
+        assert_eq!(get_pinyin_with_tone("😊", "xiao"), "xiao");
     }
 }
