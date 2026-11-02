@@ -96,6 +96,6 @@ File thực thi sau khi biên dịch nằm tại: `src-tauri/target/release/vcke
 
 ## 📄 Bản Quyền & Tác Giả (License)
 
-- Phát triển bởi **Võ Tạ Hiệp** ([@tahiep2012](https://github.com/tahiep2012)).
+- Phát triển bởi **Võ Tá Hiệp** ([@tahiep2012](https://github.com/tahiep2012)).
 - Tích hợp nhân C++ **UniKey Engine** của tác giả **Phạm Kim Long** theo giấy phép mã nguồn mở.
 - Giấy phép phân phối: **MIT License**.
