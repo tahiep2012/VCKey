@@ -170,7 +170,11 @@ impl VietnameseTelexEngine {
     /// while preserving valid English words that naturally have double letters (e.g. "sorry", "coffee", "pass", "class").
     pub fn collapse_double_modifiers(raw: &str) -> String {
         let raw_lower = raw.to_lowercase();
-        if crate::engine::vietnamese::english::ENGLISH_DICT.contains(raw_lower.as_str()) {
+        let ends_with_modifier_pair = ["ss", "rr", "ff", "xx", "jj", "ww"]
+            .iter()
+            .any(|m| raw_lower.ends_with(m));
+
+        if !ends_with_modifier_pair && crate::engine::vietnamese::english::ENGLISH_DICT.contains(raw_lower.as_str()) {
             return raw.to_string();
         }
 
