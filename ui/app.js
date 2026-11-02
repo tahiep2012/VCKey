@@ -1,4 +1,4 @@
-// VCKeys 3.0.4 - Modern UI Controller
+// VCKeys 3.0.5 - Modern UI Controller
 const { invoke } = window.__TAURI__ ? window.__TAURI__.core : { invoke: async (cmd, args) => console.log('Mock IPC:', cmd, args) };
 
 let currentSettings = {};

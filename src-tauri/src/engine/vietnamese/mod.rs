@@ -657,4 +657,53 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn test_releass_and_double_modifier_without_accent() {
+        let cases = [
+            // User reported: "releass" should NOT swallow the 2nd 's' because "releas" has no accent
+            ("releas", "releas"),
+            ("releass", "releass"),
+            ("releasss", "releasss"),
+            ("server", "server"),
+            ("focuss", "focuss"),
+            ("statuss", "statuss"),
+            ("campuss", "campuss"),
+            ("prefixx", "prefixx"),
+            ("objj", "objj"),
+            ("diff", "diff"),
+            ("diffs", "diffs"),
+            // Genuine diacritic cancellation (prefix actually formed a Vietnamese accent)
+            ("cas", "cá"),
+            ("cass", "cas"),
+            ("casss", "cass"),
+            ("as", "á"),
+            ("ass", "as"),
+            ("asss", "ass"),
+            ("car", "cả"),
+            ("carr", "car"),
+            ("caf", "cà"),
+            ("caff", "caf"),
+            ("cax", "cã"),
+            ("caxx", "cax"),
+            ("caj", "cạ"),
+            ("cajj", "caj"),
+            ("Orr", "Or"),
+            ("Orrder", "Order"),
+            ("assus", "asus"),
+            ("box", "bõ"),
+            ("boxx", "box"),
+            ("boxxx", "boxx"),
+            ("showw", "show")
+        ];
+
+        for (input, expected) in cases {
+            assert_eq!(
+                VietnameseTelexEngine::transform(input),
+                expected,
+                "Failed for input '{}'",
+                input
+            );
+        }
+    }
 }

@@ -34,6 +34,7 @@ lazy_static! {
             "lost", "nest", "pest", "quest", "blast", "boost", "frost", "ghost", "trust", "burst",
             "artist", "forest", "honest", "modest", "exist", "insist", "resist", "persist", "consist", "assist",
             "twist", "wrist", "fist", "mist", "press", "true", "false", "null", "class", "public", "private", "return",
+            "diff", "diffs", "curr",
             "per", "percent", "permission", "period", "perhaps", "perfect", "perform", "personal", "person", "perplexity"
         ];
         for w in extra {

@@ -54,9 +54,9 @@ pub fn update_tray_icon_for_mode(mode: &str) {
                 if let Ok(img) = tauri::image::Image::from_bytes(icon_bytes) {
                     let _ = tray.set_icon(Some(img));
                     let tooltip = match mode_owned.as_str() {
-                        "Chinese" => "VCKeys 3.0.4 - Tiếng Trung (Pinyin)",
-                        "English" => "VCKeys 3.0.4 - Tiếng Anh (English)",
-                        _ => "VCKeys 3.0.4 - Tiếng Việt (Telex)",
+                        "Chinese" => "VCKeys 3.0.5 - Tiếng Trung (Pinyin)",
+                        "English" => "VCKeys 3.0.5 - Tiếng Anh (English)",
+                        _ => "VCKeys 3.0.5 - Tiếng Việt (Telex)",
                     };
                     let _ = tray.set_tooltip(Some(tooltip));
                 }
@@ -404,7 +404,7 @@ pub fn run() {
                 .icon(initial_icon)
                 .menu(&tray_menu)
                 .show_menu_on_left_click(false)
-                .tooltip("VCKeys 3.0.4 - Tiếng Việt (Telex)")
+                .tooltip("VCKeys 3.0.5 - Tiếng Việt (Telex)")
                 .on_menu_event(|app, event| {
                     match event.id.as_ref() {
                         "show" => {

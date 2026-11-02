@@ -6,6 +6,38 @@ use crate::engine::vietnamese::english::is_english_word;
 /// When false, the English-word dictionary bypass is disabled.
 pub static VN_AUTO_ENGLISH_RESTORE: AtomicBool = AtomicBool::new(true);
 
+/// Checks if a string contains any Vietnamese accented vowels or the letter đ/Đ.
+pub fn contains_vietnamese_accent(s: &str) -> bool {
+    s.chars().any(|c| matches!(
+        c,
+        'á' | 'à' | 'ả' | 'ã' | 'ạ'
+        | 'ă' | 'ắ' | 'ằ' | 'ẳ' | 'ẵ' | 'ặ'
+        | 'â' | 'ấ' | 'ầ' | 'ẩ' | 'ẫ' | 'ậ'
+        | 'é' | 'è' | 'ẻ' | 'ẽ' | 'ẹ'
+        | 'ê' | 'ế' | 'ề' | 'ể' | 'ễ' | 'ệ'
+        | 'í' | 'ì' | 'ỉ' | 'ĩ' | 'ị'
+        | 'ó' | 'ò' | 'ỏ' | 'õ' | 'ọ'
+        | 'ô' | 'ố' | 'ồ' | 'ổ' | 'ỗ' | 'ộ'
+        | 'ơ' | 'ớ' | 'ờ' | 'ở' | 'ỡ' | 'ợ'
+        | 'ú' | 'ù' | 'ủ' | 'ũ' | 'ụ'
+        | 'ư' | 'ứ' | 'ừ' | 'ử' | 'ữ' | 'ự'
+        | 'ý' | 'ỳ' | 'ỷ' | 'ỹ' | 'ỵ'
+        | 'đ' | 'Á' | 'À' | 'Ả' | 'Ã' | 'Ạ'
+        | 'Ă' | 'Ắ' | 'Ằ' | 'Ẳ' | 'Ẵ' | 'Ặ'
+        | 'Â' | 'Ấ' | 'Ầ' | 'Ẩ' | 'Ẫ' | 'Ậ'
+        | 'É' | 'È' | 'Ẻ' | 'Ẽ' | 'Ẹ'
+        | 'Ê' | 'Ế' | 'Ề' | 'Ể' | 'Ễ' | 'Ệ'
+        | 'Í' | 'Ì' | 'Ỉ' | 'Ĩ' | 'Ị'
+        | 'Ó' | 'Ò' | 'Ỏ' | 'Õ' | 'Ọ'
+        | 'Ô' | 'Ố' | 'Ồ' | 'Ổ' | 'Ỗ' | 'Ộ'
+        | 'Ơ' | 'Ớ' | 'Ờ' | 'Ở' | 'Ỡ' | 'Ợ'
+        | 'Ú' | 'Ù' | 'Ủ' | 'Ũ' | 'Ụ'
+        | 'Ư' | 'Ứ' | 'Ừ' | 'Ử' | 'Ữ' | 'Ự'
+        | 'Ý' | 'Ỳ' | 'Ỷ' | 'Ỹ' | 'Ỵ'
+        | 'Đ'
+    ))
+}
+
 pub struct VietnameseTelexEngine;
 
 impl VietnameseTelexEngine {
@@ -90,37 +122,30 @@ impl VietnameseTelexEngine {
                 }
 
                 // 6. Double modifier cancellation at end (e.g. tess -> tes, teff -> tef, terr -> ter, showw -> show, boxx -> box)
-                // NOTE: Tone/horn cancellation (s, f, r, x, j, w) ONLY applies if the prefix preceding the double modifier
-                // contains at least one vowel that could receive the diacritic.
-                // If prefix has NO vowels (e.g. "SS", "ss", "FF", "ff", "RR", "rr", "XX", "xx", "JJ", "jj", "CSS", "css"),
+                // Tone/horn cancellation (s, f, r, x, j, w) ONLY applies if the single modifier key
+                // actually created a Vietnamese diacritic (e.g. "te" + 's' -> "tés", "bo" + 'x' -> "bõ").
+                // If appending the single modifier did not create any diacritic (e.g. "relea" + 's' -> "releas", "serve" + 'r' -> "sẻver"),
                 // it is NOT a tone cancellation and must be preserved as plain consonants.
                 let double_modifier_cancellations = ["ss", "ff", "rr", "xx", "jj", "ww"];
                 for dbl in double_modifier_cancellations {
                     if norm_lower.ends_with(dbl) && collapsed.len() >= 2 {
                         let prefix = &collapsed[..collapsed.len() - 2];
-                        let has_vowel = prefix.chars().any(|c| {
-                            matches!(
-                                c.to_ascii_lowercase(),
-                                'a' | 'e' | 'i' | 'o' | 'u' | 'y'
-                            ) || matches!(
-                                c,
-                                'á' | 'à' | 'ả' | 'ã' | 'ạ' | 'ă' | 'ắ' | 'ằ' | 'ẳ' | 'ẵ' | 'ặ' | 'â' | 'ấ' | 'ầ' | 'ẩ' | 'ẫ' | 'ậ'
-                                | 'é' | 'è' | 'ẻ' | 'ẽ' | 'ẹ' | 'ê' | 'ế' | 'ề' | 'ể' | 'ễ' | 'ệ'
-                                | 'í' | 'ì' | 'ỉ' | 'ĩ' | 'ị'
-                                | 'ó' | 'ò' | 'ỏ' | 'õ' | 'ọ' | 'ô' | 'ố' | 'ồ' | 'ổ' | 'ỗ' | 'ộ' | 'ơ' | 'ớ' | 'ờ' | 'ở' | 'ỡ' | 'ợ'
-                                | 'ú' | 'ù' | 'ủ' | 'ũ' | 'ụ' | 'ư' | 'ứ' | 'ừ' | 'ử' | 'ữ' | 'ự'
-                                | 'ý' | 'ỳ' | 'ỷ' | 'ỹ' | 'ỵ'
-                                | 'Á' | 'À' | 'Ả' | 'Ã' | 'Ạ' | 'Ă' | 'Ắ' | 'Ằ' | 'Ẳ' | 'Ẵ' | 'Ặ' | 'Â' | 'Ấ' | 'Ầ' | 'Ẩ' | 'Ẫ' | 'Ậ'
-                                | 'É' | 'È' | 'Ẻ' | 'Ẽ' | 'Ẹ' | 'Ê' | 'Ế' | 'Ề' | 'Ể' | 'Ễ' | 'Ệ'
-                                | 'Í' | 'Ì' | 'Ỉ' | 'Ĩ' | 'Ị'
-                                | 'Ó' | 'Ò' | 'Ỏ' | 'Õ' | 'Ọ' | 'Ô' | 'Ố' | 'Ồ' | 'Ổ' | 'Ỗ' | 'Ộ' | 'Ơ' | 'Ớ' | 'Ờ' | 'Ở' | 'Ỡ' | 'Ợ'
-                                | 'Ú' | 'Ù' | 'Ủ' | 'Ũ' | 'Ụ' | 'Ư' | 'Ứ' | 'Ừ' | 'Ử' | 'Ữ' | 'Ự'
-                                | 'Ý' | 'Ỳ' | 'Ỷ' | 'Ỹ' | 'Ỵ'
-                            )
-                        });
-                        if has_vowel {
+                        let single_mod = &collapsed[collapsed.len() - 1..];
+
+                        // Special case for "ww": no English word ends with "ww", so "ww" at the end of a word
+                        // is always intended to escape the horn/trăng (e.g. showw -> show, howw -> how, draww -> draw).
+                        if *dbl == *"ww" {
                             let transformed_prefix = UnikeyEngine::transform_with_method(prefix, InputMethod::Telex);
-                            let single_mod = &collapsed[collapsed.len() - 1..];
+                            return format!("{}{}", transformed_prefix, single_mod);
+                        }
+
+                        let prefix_with_single = format!("{}{}", prefix, single_mod);
+                        let t_without = UnikeyEngine::transform_with_method(prefix, InputMethod::Telex);
+                        let t_with = UnikeyEngine::transform_with_method(&prefix_with_single, InputMethod::Telex);
+                        let literal_append = format!("{}{}", t_without, single_mod);
+
+                        if t_with != literal_append {
+                            let transformed_prefix = UnikeyEngine::transform_with_method(prefix, InputMethod::Telex);
                             return format!("{}{}", transformed_prefix, single_mod);
                         }
                     }
@@ -183,14 +208,28 @@ impl VietnameseTelexEngine {
                     run_len += 1;
                 }
                 if run_len >= 2 {
-                    // For repeated modifier keys (e.g. rr, rrr, rrrr), the first pair cancels
-                    // the diacritic and produces 1 character. Every subsequent keypress produces
-                    // an additional character. Thus run_len keys yield run_len - 1 characters.
-                    for j in 0..(run_len - 1) {
-                        result.push(chars[i + j]);
+                    // Check if adding the first modifier key actually modified a diacritic/vowel.
+                    // If t_with == t_without + curr, then the modifier was just treated as a literal consonant
+                    // (e.g. "relea" + 's' -> "releas", "serve" + 'r' -> "sẻver").
+                    // In that case, it did NOT create a diacritic, so the repeated key is NOT a cancellation!
+                    let prefix: String = chars[..i].iter().collect();
+                    let prefix_with_first: String = chars[..=i].iter().collect();
+                    let t_without = UnikeyEngine::transform_with_method(&prefix, InputMethod::Telex);
+                    let t_with = UnikeyEngine::transform_with_method(&prefix_with_first, InputMethod::Telex);
+                    let literal_append = format!("{}{}", t_without, chars[i]);
+
+                    let created_diacritic = t_with != literal_append;
+
+                    if created_diacritic {
+                        // For repeated modifier keys (e.g. rr, rrr, rrrr), the first pair cancels
+                        // the diacritic and produces 1 character. Every subsequent keypress produces
+                        // an additional character. Thus run_len keys yield run_len - 1 characters.
+                        for j in 0..(run_len - 1) {
+                            result.push(chars[i + j]);
+                        }
+                        i += run_len;
+                        continue;
                     }
-                    i += run_len;
-                    continue;
                 }
             }
             result.push(chars[i]);
