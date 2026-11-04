@@ -53,9 +53,6 @@ pub struct HookState {
     pub alt_down: bool,
     pub win_down: bool,
     pub shift_down: bool,
-    // Timestamp trackers for idle timeout and history expiration (UniKey / EVKey standard)
-    pub last_keystroke_time: Option<std::time::Instant>,
-    pub last_backspace_time: Option<std::time::Instant>,
 }
 
 impl HookState {
@@ -63,8 +60,6 @@ impl HookState {
         self.vn_raw_word.clear();
         self.vn_displayed_str.clear();
         self.vn_word_history.clear();
-        self.last_keystroke_time = None;
-        self.last_backspace_time = None;
     }
 
     pub fn reset_modifiers(&mut self) {
@@ -101,8 +96,6 @@ impl Default for HookState {
             alt_down: false,
             win_down: false,
             shift_down: false,
-            last_keystroke_time: None,
-            last_backspace_time: None,
         }
     }
 }
@@ -284,26 +277,6 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
 
     // --- B. VIETNAMESE TELEX MODE ---
     if state.mode == "Vietnamese" {
-        let now = std::time::Instant::now();
-
-        // 0. Keystroke Idle Timeout (1.2s - 1.5s: UniKey / EVKey industry standard):
-        // If user pauses typing for > 1200ms, assume the previous word/sentence ended
-        // and cleanly flush the Vietnamese word buffers to prevent stale ghost words from blocking diacritics.
-        if let Some(last_time) = state.last_keystroke_time {
-            if now.duration_since(last_time).as_millis() > 1200 {
-                state.reset_vietnamese_buffers();
-            }
-        }
-        state.last_keystroke_time = Some(now);
-
-        // Word history expiration: if last backspace was more than 2500ms ago, flush history
-        if let Some(last_bs) = state.last_backspace_time {
-            if now.duration_since(last_bs).as_millis() > 2500 {
-                state.vn_word_history.clear();
-                state.last_backspace_time = None;
-            }
-        }
-
         // Space key: push current word into history stack, track consecutive spaces
         if vk_code == VK_SPACE {
             if !state.vn_raw_word.is_empty() {
@@ -344,7 +317,6 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
 
         // Backspace: handle rollback within word and cross-word backspace restoration
         if vk_code == VK_BACK {
-            state.last_backspace_time = Some(now);
             if !state.vn_raw_word.is_empty() {
                 let curr_len = state.vn_displayed_str.chars().count();
                 let target_len = curr_len.saturating_sub(1);
@@ -1201,36 +1173,37 @@ mod tests {
     }
 
     #[test]
-    fn test_keystroke_idle_timeout() {
+    fn test_cross_word_backspace_after_idle_pause() {
         let mut state = HookState::default();
 
-        // Type a word "chao"
-        for c in "chao".chars() {
+        // 1. Type word "co"
+        for c in "co".chars() {
             simulate_type(&mut state, c);
         }
-        assert_eq!(state.vn_displayed_str, "chao");
-        assert_eq!(state.vn_raw_word, "chao");
+        assert_eq!(state.vn_displayed_str, "co");
+        assert_eq!(state.vn_raw_word, "co");
 
-        // Simulate 1.5 seconds idle time passing (> 1200ms)
-        state.last_keystroke_time = Some(std::time::Instant::now() - std::time::Duration::from_millis(1500));
-
-        let now = std::time::Instant::now();
-        if let Some(last_time) = state.last_keystroke_time {
-            if now.duration_since(last_time).as_millis() > 1200 {
-                state.reset_vietnamese_buffers();
-            }
-        }
-        state.last_keystroke_time = Some(now);
-
-        // Buffer is cleanly reset
+        // 2. Type space
+        simulate_space(&mut state);
         assert_eq!(state.vn_raw_word, "");
         assert_eq!(state.vn_displayed_str, "");
+        assert_eq!(state.vn_word_history.len(), 1);
 
-        // Next word types fresh with diacritics
-        for c in "hoas".chars() {
-            simulate_type(&mut state, c);
-        }
-        assert_eq!(state.vn_displayed_str, "hóa");
+        // 3. User pauses for 3 seconds, 10 seconds or longer (idle pause):
+        // Word history MUST be preserved and not wiped by any timer!
+        assert_eq!(state.vn_word_history.len(), 1);
+
+        // 4. User presses Backspace to delete the trailing space:
+        // History restores previous word "co"!
+        simulate_backspace(&mut state);
+        assert_eq!(state.vn_word_history.len(), 0);
+        assert_eq!(state.vn_raw_word, "co");
+        assert_eq!(state.vn_displayed_str, "co");
+
+        // 5. User presses 's' -> transforms "co" + "s" into "có"!
+        simulate_type(&mut state, 's');
+        assert_eq!(state.vn_raw_word, "cos");
+        assert_eq!(state.vn_displayed_str, "có");
     }
 
     #[test]

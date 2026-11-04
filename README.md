@@ -1,4 +1,4 @@
-# 🚀 VCKeys 3.0.6 Pro Native (Tauri v2 + Rust)
+# 🚀 VCKeys 3.0.7 Pro Native (Tauri v2 + Rust)
 
 Bộ gõ Đa Ngôn Ngữ Native siêu tốc (**Việt - Trung - Anh**) viết hoàn toàn bằng **Rust** kết hợp **Tauri v2** và giao diện **Modern Fluent UI**.
 
