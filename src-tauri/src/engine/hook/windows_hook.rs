@@ -404,10 +404,8 @@ pub unsafe extern "system" fn keyboard_proc(n_code: i32, w_param: WPARAM, l_para
         }
 
         if let Some(ch) = key_char {
-            // Self-healing: if buffer reaches 9 chars, it cannot be a single valid Vietnamese syllable.
-            // (Longest raw Vietnamese syllable is ~7-8 chars, e.g. "nghiengs", "khuyeens").
-            // Reset buffer to prevent corrupted/stale buffer from permanently blocking diacritics.
-            if state.vn_raw_word.chars().count() >= 9 {
+            // Self-healing: if buffer reaches 15 chars, reset buffer to prevent corrupted/stale buffer from permanently blocking diacritics.
+            if state.vn_raw_word.chars().count() >= 15 {
                 state.reset_vietnamese_buffers();
             }
             state.vn_raw_word.push(ch);
@@ -1153,16 +1151,16 @@ mod tests {
         let mut state = HookState::default();
 
         // Simulate typing a long string without space (e.g. from pasting or missed reset)
-        // With threshold = 9, typing 10 characters triggers self-healing
-        for c in "abcdefghij".chars() {
-            if state.vn_raw_word.chars().count() >= 9 {
+        // With threshold = 15, typing 16 characters triggers self-healing
+        for c in "abcdefghijklmnop".chars() {
+            if state.vn_raw_word.chars().count() >= 15 {
                 state.reset_vietnamese_buffers();
             }
             simulate_type(&mut state, c);
         }
 
-        // Buffer self-healed and only has the latest character 'j'
-        assert_eq!(state.vn_raw_word, "j");
+        // Buffer self-healed and only has the latest character 'p'
+        assert_eq!(state.vn_raw_word, "p");
 
         // Clear and type a Vietnamese syllable: "hojc" -> "học"
         state.reset_vietnamese_buffers();

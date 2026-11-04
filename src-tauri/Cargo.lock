@@ -4150,7 +4150,7 @@ dependencies = [
 
 [[package]]
 name = "vckeys-tauri"
-version = "3.0.7"
+version = "3.0.8"
 dependencies = [
  "cc",
  "lazy_static",

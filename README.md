@@ -1,4 +1,4 @@
-# 🚀 VCKeys 3.0.7 Pro Native (Tauri v2 + Rust)
+# 🚀 VCKeys 3.0.8 Pro Native (Tauri v2 + Rust)
 
 Bộ gõ Đa Ngôn Ngữ Native siêu tốc (**Việt - Trung - Anh**) viết hoàn toàn bằng **Rust** kết hợp **Tauri v2** và giao diện **Modern Fluent UI**.
 
@@ -31,6 +31,8 @@ Bộ gõ Đa Ngôn Ngữ Native siêu tốc (**Việt - Trung - Anh**) viết ho
 - Cơ chế gõ phím thứ 3 hủy mũ (`ooo` $\rightarrow$ `oo` $\rightarrow$ `good`, `tooo` $\rightarrow$ `too`, `leee` $\rightarrow$ `lee`).
 - **Tự động nhận diện và bảo toàn từ tiếng Anh** với từ điển tích hợp hơn 35.000 từ.
 - Đặt dấu thanh mới chuẩn tiếng Việt hiện đại (TCVN 2002 / UniKey modern: `hóa`, `thủy`) hoặc kiểu truyền thống (`hoá`, `thuỷ`).
+- **Tối ưu xóa khoảng trắng và bỏ dấu hồi tố liên từ (v3.0.7)**: Loại bỏ hoàn toàn idle timeout, cho phép người dùng dừng gõ tùy ý mà vẫn xóa dấu cách và bỏ dấu bình thường (`CO ` $\rightarrow$ chờ $\rightarrow$ Backspace $\rightarrow$ `S` $\rightarrow$ `CÓ`).
+- **Nâng dung lượng bộ nhớ đệm từ đang gõ lên 15 ký tự (v3.0.8)**: Mở rộng ngưỡng tự phục hồi đệm từ 9 lên 15 ký tự, hỗ trợ tối đa cho các từ ghép dài, từ ngoại lai và thuật ngữ kỹ thuật mà không bị reset đệm sớm.
 
 ---
 
