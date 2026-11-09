@@ -48,6 +48,8 @@ pub struct HookState {
     pub chinese_single_quote_open: bool,
     // Smart-typing flags (mirrored from AppSettings, updated on save)
     pub vn_auto_english_restore: bool,
+    pub minimize_to_tray: bool,
+    pub run_on_startup: bool,
     // Modifier tracking flags (to prevent GetAsyncKeyState ghost/stuck states)
     pub ctrl_down: bool,
     pub alt_down: bool,
@@ -92,6 +94,8 @@ impl Default for HookState {
             chinese_quote_open: false,
             chinese_single_quote_open: false,
             vn_auto_english_restore: true,
+            minimize_to_tray: true,
+            run_on_startup: false,
             ctrl_down: false,
             alt_down: false,
             win_down: false,

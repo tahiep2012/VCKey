@@ -54,9 +54,9 @@ pub fn update_tray_icon_for_mode(mode: &str) {
                 if let Ok(img) = tauri::image::Image::from_bytes(icon_bytes) {
                     let _ = tray.set_icon(Some(img));
                     let tooltip = match mode_owned.as_str() {
-                        "Chinese" => "VCKeys 3.0.8 - Tiếng Trung (Pinyin)",
-                        "English" => "VCKeys 3.0.8 - Tiếng Anh (English)",
-                        _ => "VCKeys 3.0.8 - Tiếng Việt (Telex)",
+                        "Chinese" => "VCKeys 3.0.9 - Tiếng Trung (Pinyin)",
+                        "English" => "VCKeys 3.0.9 - Tiếng Anh (English)",
+                        _ => "VCKeys 3.0.9 - Tiếng Việt (Telex)",
                     };
                     let _ = tray.set_tooltip(Some(tooltip));
                 }
@@ -97,6 +97,8 @@ fn save_settings(settings: AppSettings) -> Result<(), String> {
         };
         state.chinese_punctuation = settings.chinese_punctuation;
         state.vn_auto_english_restore = settings.vn_auto_english_restore;
+        state.minimize_to_tray = settings.minimize_to_tray;
+        state.run_on_startup = settings.run_on_startup;
     }
     {
         let im = crate::engine::vietnamese::unikey_ffi::InputMethod::from_str(&settings.input_type);
@@ -154,7 +156,7 @@ fn apply_autostart(enable: bool) -> Result<(), String> {
             // Get current exe path
             let exe_path = std::env::current_exe()
                 .map_err(|e| e.to_string())?;
-            let exe_str = format!("\"{}\"", exe_path.to_string_lossy());
+            let exe_str = format!("\"{}\" --autostart", exe_path.to_string_lossy());
             let exe_wide: Vec<u16> = exe_str.encode_utf16().chain(std::iter::once(0)).collect();
             let res2 = unsafe {
                 RegSetValueExW(
@@ -282,6 +284,8 @@ pub fn run() {
                             if let Some(window) = app.get_webview_window("main") {
                                 let _ = window.show();
                                 let _ = window.unminimize();
+                                let _ = window.set_always_on_top(true);
+                                let _ = window.set_always_on_top(false);
                                 let _ = window.set_focus();
                             }
                         }
@@ -290,8 +294,15 @@ pub fn run() {
             });
         }
         Err(_) => {
+            #[cfg(windows)]
+            unsafe {
+                use windows_sys::Win32::UI::WindowsAndMessaging::AllowSetForegroundWindow;
+                AllowSetForegroundWindow(u32::MAX);
+            }
             if let Ok(mut stream) = TcpStream::connect(("127.0.0.1", SINGLE_INSTANCE_PORT)) {
                 let _ = stream.write_all(b"SHOW");
+                let _ = stream.flush();
+                std::thread::sleep(std::time::Duration::from_millis(150));
             }
             std::process::exit(0);
         }
@@ -311,15 +322,22 @@ pub fn run() {
         .setup(|app| {
             *GLOBAL_APP_HANDLE.lock() = Some(app.handle().clone());
 
-            // Enforce compact window size & disable maximize button
+            let is_autostart = std::env::args().any(|arg| arg == "--autostart" || arg == "--minimized");
             if let Some(main_win) = app.get_webview_window("main") {
                 let _ = main_win.set_maximizable(false);
                 let _ = main_win.set_resizable(false);
+                if !is_autostart {
+                    let _ = main_win.show();
+                    let _ = main_win.set_focus();
+                } else {
+                    trim_memory();
+                }
             }
 
             // Load saved settings and sync to global states
             let store = ConfigStore::new(get_config_dir());
             let saved_settings = store.load_settings();
+            let _ = apply_autostart(saved_settings.run_on_startup);
             {
                 let mut state = GLOBAL_STATE.lock();
                 state.mode = saved_settings.mode.clone();
@@ -332,6 +350,8 @@ pub fn run() {
                 };
                 state.chinese_punctuation = saved_settings.chinese_punctuation;
                 state.vn_auto_english_restore = saved_settings.vn_auto_english_restore;
+                state.minimize_to_tray = saved_settings.minimize_to_tray;
+                state.run_on_startup = saved_settings.run_on_startup;
             }
             {
                 let im = crate::engine::vietnamese::unikey_ffi::InputMethod::from_str(&saved_settings.input_type);
@@ -404,7 +424,7 @@ pub fn run() {
                 .icon(initial_icon)
                 .menu(&tray_menu)
                 .show_menu_on_left_click(false)
-                .tooltip("VCKeys 3.0.8 - Tiếng Việt (Telex)")
+                .tooltip("VCKeys 3.0.9 - Tiếng Việt (Telex)")
                 .on_menu_event(|app, event| {
                     match event.id.as_ref() {
                         "show" => {
@@ -492,11 +512,31 @@ pub fn run() {
             Ok(())
         })
         .on_window_event(|window, event| {
-            if let WindowEvent::CloseRequested { api, .. } = event {
-                // Prevent app from exiting on close button 'X', minimize to system tray instead
-                api.prevent_close();
-                let _ = window.hide();
-                trim_memory();
+            match event {
+                WindowEvent::CloseRequested { api, .. } => {
+                    let minimize_to_tray = {
+                        let state = GLOBAL_STATE.lock();
+                        state.minimize_to_tray
+                    };
+                    if minimize_to_tray {
+                        api.prevent_close();
+                        let _ = window.hide();
+                        trim_memory();
+                    } else {
+                        window.app_handle().exit(0);
+                    }
+                }
+                WindowEvent::Resized(_) => {
+                    let minimize_to_tray = {
+                        let state = GLOBAL_STATE.lock();
+                        state.minimize_to_tray
+                    };
+                    if minimize_to_tray && window.is_minimized().unwrap_or(false) {
+                        let _ = window.hide();
+                        trim_memory();
+                    }
+                }
+                _ => {}
             }
         })
         .run(tauri::generate_context!())

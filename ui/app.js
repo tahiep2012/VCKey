@@ -1,4 +1,4 @@
-// VCKeys 3.0.8 - Modern UI Controller
+// VCKeys 3.0.9 - Modern UI Controller
 const { invoke } = window.__TAURI__ ? window.__TAURI__.core : { invoke: async (cmd, args) => console.log('Mock IPC:', cmd, args) };
 
 let currentSettings = {};
@@ -154,8 +154,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Save settings button
-document.getElementById('btnApply').addEventListener('click', async () => {
+async function saveAllSettings(isAutoSave = false) {
   let customFontSize = parseInt(fontSizeInput.value) || 17;
   if (customFontSize < 8) customFontSize = 8;
   if (customFontSize > 48) customFontSize = 48;
@@ -188,12 +187,13 @@ document.getElementById('btnApply').addEventListener('click', async () => {
 
   try {
     await invoke('save_settings', { settings: updatedSettings });
+    currentSettings = updatedSettings;
     updateModeBadge(updatedSettings.mode);
     applyTheme(updatedSettings.theme);
     
     const btn = document.getElementById('btnApply');
     const originalText = btn.textContent;
-    btn.textContent = '✓ Đã lưu cài đặt';
+    btn.textContent = isAutoSave ? '✓ Đã cập nhật' : '✓ Đã lưu cài đặt';
     btn.style.backgroundColor = '#16a34a';
     setTimeout(() => {
       btn.textContent = originalText;
@@ -202,7 +202,14 @@ document.getElementById('btnApply').addEventListener('click', async () => {
   } catch (err) {
     console.error('Lỗi khi lưu cấu hình:', err);
   }
-});
+}
+
+// Save settings button
+document.getElementById('btnApply').addEventListener('click', () => saveAllSettings(false));
+
+// Instant auto-save on startup & tray behavior checkboxes
+document.getElementById('chkRunOnStartup')?.addEventListener('change', () => saveAllSettings(true));
+document.getElementById('chkMinimizeToTray')?.addEventListener('change', () => saveAllSettings(true));
 
 // Theme change dropdown listener
 document.getElementById('selectTheme')?.addEventListener('change', async (e) => {
