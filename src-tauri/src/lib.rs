@@ -284,8 +284,6 @@ pub fn run() {
                             if let Some(window) = app.get_webview_window("main") {
                                 let _ = window.show();
                                 let _ = window.unminimize();
-                                let _ = window.set_always_on_top(true);
-                                let _ = window.set_always_on_top(false);
                                 let _ = window.set_focus();
                             }
                         }
@@ -326,11 +324,12 @@ pub fn run() {
             if let Some(main_win) = app.get_webview_window("main") {
                 let _ = main_win.set_maximizable(false);
                 let _ = main_win.set_resizable(false);
-                if !is_autostart {
+                if is_autostart {
+                    let _ = main_win.hide();
+                    trim_memory();
+                } else {
                     let _ = main_win.show();
                     let _ = main_win.set_focus();
-                } else {
-                    trim_memory();
                 }
             }
 

@@ -18,7 +18,7 @@
         "maximizable": false,
         "fullscreen": false,
         "center": true,
-        "visible": false,
+        "visible": true,
         "decorations": true,
         "shadow": true
       },
